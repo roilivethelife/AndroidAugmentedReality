@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="3b61a70884adaf0be3fc06c70c801e3e6df13133">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-25.0.0_5c0ef2fe225b9e9a0cb1e7e0ca9e078afbd232e5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-v4/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-v4-25.0.0_88049018411ec91907a7aab6fd75a415a5360b14/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-media-compat-25.0.0_dabffd007711ae6c9009eb502a89c6205512153b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-fragment/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-fragment-25.0.0_b8ce2ef650bb799f598cdf6b1e5b7e6e7710497f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-appcompat-v7-25.0.0_85637a53173338df67f4f13749f19af9ec4701c2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/25.0.0/support-annotations-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-25.0.0_101b9e5c449067f1caba451d8fb381ffdee47796/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-fragment/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-25.0.0_c88a68f1a3a1cc673a6fed4eb34d59e58d58e096/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="19badea4eb2c7ff11e83768e4b4031e35b21469f">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_e94a9d54891b738aafe813edecb6df0659c3e2a7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-compat/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="75b1f366ff0bbc78f8b1f7cf0dc82e7c53afef6a">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-compat-25.0.0_692ae317fe27b542b846ece1907ba5d097a62ea4/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="06396158a2e6bf9cfcbbd1e76bde7e75da30eb72">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_3fc14ed99a5e24c64004447e2d6d1258bf5b355e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="26674000177e45447a0326a6ad84612761199a13">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-core-ui-25.0.0_f1b2a7c3b90199fc8bf23b9529742761a3bedd9b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-25.0.0_e33795fa36cec6c3625d9ffcd01807b69b418a4b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-vector-drawable-25.0.0_d065324ae971831e65e89c5fd1617b658369df39/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-25.0.0_19a7212a88084fa292adfd2f5fe91c9beb5c531a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-core-utils-25.0.0_d70801d488c94dc102c4a63a6d4391014279c3da/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-animated-vector-drawable-25.0.0_f16b88a676e56960082464bf5314de7f07e67cae/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/exploded-aar/com.android.support/support-compat/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f2e3b9bc1ec25f652e8007ce7774c991e38f6a00">
+        <dex dex="/home/roi/StudioProjects/TestVuforia/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-25.0.0_6353f1952443d0b379047db8ec47e237e6a49707/classes.dex" />
+    </item>
+
+</items>
