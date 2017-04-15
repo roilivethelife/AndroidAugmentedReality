@@ -7,9 +7,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.Matrix;
 
-import com.example.roi.testvuforia.graficos.MapElement;
-import com.example.roi.testvuforia.graficos.MapaControler;
-import com.example.roi.testvuforia.vuforia.ArActivityInteface;
+import com.example.roi.testvuforia.graficos.Mapa.MapaElement;
+import com.example.roi.testvuforia.graficos.Mapa.MapaControler;
 import com.example.roi.testvuforia.vuforia.ArRender;
 import com.vuforia.State;
 import com.vuforia.Tool;
@@ -41,9 +40,7 @@ public class LocationControler implements SensorEventListener{
     private float[] vuforiaMatrix;
     private float[] vuforiaMatrixCalib;
 
-    private ArActivityInteface arActivityInteface;
-    public LocationControler(Context context, MapaControler mapaControler, ArActivityInteface arActivityInteface){
-        this.arActivityInteface =arActivityInteface;
+    public LocationControler(Context context, MapaControler mapaControler){
         this.mapaControler=mapaControler;
         lastMatrixCamara = new float[16];
         quaternionGiroscopioListener = new Quaternion();
@@ -144,8 +141,7 @@ public class LocationControler implements SensorEventListener{
                     Quaternion q = new Quaternion();
                     angle2=-angle2;
                     q.setEulerAngles(angle1, angle2,0);
-                    arActivityInteface.setTextViewText("Angulos: 1="+angle1+" 2="+angle2+"\n"+
-                    "quat="+q.toString(2));
+                    //arActivityInteface.setTextViewText("Angulos: 1="+angle1+" 2="+angle2+"\nquat="+q.toString(2));
                     SensorManager.getRotationMatrixFromVector(calibMatrix,q.toFloat());
 
                     float[] matrixfinal = new float[16];
@@ -169,11 +165,11 @@ public class LocationControler implements SensorEventListener{
             camDir[1]=lastMatrixCamara[9];
             camDir[2]=lastMatrixCamara[10];
             if(mapaControler.colisionRayoPared(camPos,camDir,colPoint)){
-                MapElement mapElement= mapaControler.getColisionElement();
-                mapElement.pos[0]=colPoint[0];
-                mapElement.pos[1]=colPoint[1];
-                mapElement.pos[2]=colPoint[2];
-                mapElement.visible=true;
+                MapaElement mapaElement = mapaControler.getColisionElement();
+                mapaElement.pos[0]=colPoint[0];
+                mapaElement.pos[1]=colPoint[1];
+                mapaElement.pos[2]=colPoint[2];
+                mapaElement.visible=true;
             }
             nuevaColision=false;
         }

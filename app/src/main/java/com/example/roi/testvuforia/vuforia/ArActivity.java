@@ -1,13 +1,10 @@
 package com.example.roi.testvuforia.vuforia;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.LightingColorFilter;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -21,23 +18,21 @@ import android.widget.ToggleButton;
 
 import com.example.roi.testvuforia.LocationControler;
 import com.example.roi.testvuforia.R;
-import com.example.roi.testvuforia.graficos.MapaControler;
+import com.example.roi.testvuforia.graficos.Mapa.MapaControler;
 import com.example.roi.testvuforia.graficos.MiGLSurfaceView;
 import com.vuforia.CameraDevice;
 import com.vuforia.DataSet;
 import com.vuforia.ObjectTracker;
 import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.RotationalDeviceTracker;
 import com.vuforia.STORAGE_TYPE;
 import com.vuforia.Trackable;
 import com.vuforia.TrackerManager;
 import com.vuforia.Vuforia;
-import com.vuforia.VuforiaBase;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
 
 
-public class ArActivity extends Activity implements View.OnClickListener, ArActivityInteface{
+public class ArActivity extends Activity implements View.OnClickListener{
 
     private static final String LOGTAG = "ArActivity";
 
@@ -86,6 +81,7 @@ public class ArActivity extends Activity implements View.OnClickListener, ArActi
 
         //inicialización Vuforia
         //TODO:(opcional) crear una Task para ejecutar este código
+        //y/o al menos mostrar un mensaje de cargando
         int mProgressValue;
         Vuforia.setInitParameters(this, Vuforia.GL_20, licenseKey);
         do {
@@ -96,12 +92,9 @@ public class ArActivity extends Activity implements View.OnClickListener, ArActi
         //Iniciar tracker
         extendedTrackingActive=false;
         TrackerManager tManager = TrackerManager.getInstance();
-        RotationalDeviceTracker rotTracker = (RotationalDeviceTracker)tManager.initTracker(RotationalDeviceTracker.getClassType());
-        rotTracker.setPosePrediction(true);
-        rotTracker.setModelCorrection(rotTracker.getDefaultHandheldModel());
-
         objectTracker = (ObjectTracker) tManager.initTracker(ObjectTracker.getClassType());
-        //cargar datos del tracker
+
+        //cargar datos del tracker: leer archivo que contiene las imágenes a rastrear
         currentDataSet = objectTracker.createDataSet();
         currentDataSet.load("Prueba.xml", STORAGE_TYPE.STORAGE_APPRESOURCE);
         objectTracker.activateDataSet(currentDataSet);
@@ -114,15 +107,16 @@ public class ArActivity extends Activity implements View.OnClickListener, ArActi
             String name = "Current Dataset : " + trackable.getName();
             trackable.setUserData(name);
             Log.d(LOGTAG, "UserData:Set the following user data "
-                    + (String) trackable.getUserData());
+                    + trackable.getUserData());
         }
 
 
 
+        //Crear instancias de MapaControler, LocationControler
         mapaControler = new MapaControler("Mapa",this);
-        locationControler=new LocationControler(this,mapaControler,this);
+        locationControler=new LocationControler(this,mapaControler);
         glView = new MiGLSurfaceView(this);
-        arRender = new ArRender(this,this,locationControler,mapaControler);
+        arRender = new ArRender(this,locationControler,mapaControler);
         glView.setRenderer(arRender);
         glView.setOnTouchInterface(arRender);
 
@@ -221,13 +215,6 @@ public class ArActivity extends Activity implements View.OnClickListener, ArActi
         }
     }
 
-    @Override
-    public void setTextViewText(String str) {
-        if(str!=null){
-            Message msg = Message.obtain(handler,MSG_UPDATE_TEXTVIEW,str);
-            handler.sendMessage(msg);
-        }
-    }
 
     private void createHandler(){
         handler = new Handler(){

@@ -1,17 +1,16 @@
-package com.example.roi.testvuforia.graficos;
+package com.example.roi.testvuforia.graficos.Mapa;
 
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 import com.example.roi.testvuforia.R;
-import com.example.roi.testvuforia.graficos.figuras.Obj;
+import com.example.roi.testvuforia.graficos.AABB;
+import com.example.roi.testvuforia.graficos.ObjLoader.ObjReader;
+import com.example.roi.testvuforia.graficos.Shader;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by roi on 19/12/16.
@@ -20,9 +19,9 @@ import java.util.Map;
 public class MapaControler {
     private String mapName;
 
-    private ArrayList<MapElement> mapElements;
-    private MapElement colisionElement;
-    private MapElement habitacionElement;
+    private ArrayList<MapaElement> mapaElements;
+    private MapaElement colisionElement;
+    private MapaElement habitacionElement;
 
     private float[] tamHabitacion = {360,300,450};//cm
     private float[] posicionReferencia = {180,120,0};//cm
@@ -34,30 +33,28 @@ public class MapaControler {
 
     public MapaControler(String mapName, Context context){
         this.mapName=mapName;
-        mapElements = new ArrayList<>();
+        mapaElements = new ArrayList<>();
         AABB.Vec3D min = new AABB.Vec3D(-posicionReferencia[0],-posicionReferencia[1],-posicionReferencia[2]);
         AABB.Vec3D max = new AABB.Vec3D(tamHabitacion[0]-posicionReferencia[0],tamHabitacion[1]-posicionReferencia[1],tamHabitacion[2]-posicionReferencia[2]);
         //Todo: "deberia funcionar"
         aabb = new AABB(min, max);
+
         this.context=context;
     }
 
     public void cargar(){
-        MapElement cuboCentro=new MapElement("Centro",context, R.raw.cubo);
-        mapElements.add(cuboCentro);
+        MapaElement cuboCentro=new MapaElement("Centro", new ObjReader(context, R.raw.cubo).getObjeto());
+        mapaElements.add(cuboCentro);
 
-        colisionElement= new MapElement("Colision",context, R.raw.cubo);
+        colisionElement= new MapaElement("Colision",new ObjReader(context, R.raw.cubo).getObjeto());
         colisionElement.visible=false;
-        mapElements.add(colisionElement);
+        mapaElements.add(colisionElement);
 
 
-        habitacionElement = new MapElement("Wireframe",context,R.raw.paredes);
+        habitacionElement = new MapaElement("Wireframe",new ObjReader(context, R.raw.paredes).getObjeto());
         habitacionElement.scale=Arrays.copyOf(tamHabitacion,tamHabitacion.length);
-        //habitacionElement.pos=Arrays.copyOf(posicionReferencia,posicionReferencia.length);
-        //habitacionElement.pos[0]=posicionReferencia[0];
-        //habitacionElement.pos[1]=-posicionReferencia[1];
         habitacionElement.obj.setModoDibujado(GLES20.GL_LINE_LOOP);
-        mapElements.add(habitacionElement);
+        mapaElements.add(habitacionElement);
     }
 
     public boolean isInside(float[] camPos){
@@ -67,17 +64,17 @@ public class MapaControler {
                 camPos[2]>0.0f && camPos[2]<tamHabitacion[2];
     }
 
-    public void addObject(MapElement mapElement){
-        mapElements.add(mapElement);
+    public void addObject(MapaElement mapaElement){
+        mapaElements.add(mapaElement);
     }
 
     public void dibujar(Shader shader, float[] modelViewMatrix){
-        for (MapElement mapElement : mapElements) {
+        for (MapaElement mapaElement : mapaElements) {
             float[] tempModelViewMatrix = modelViewMatrix.clone();
-            Matrix.translateM(tempModelViewMatrix,0,mapElement.pos[0],mapElement.pos[1],mapElement.pos[2]);
-            Matrix.scaleM(tempModelViewMatrix,0,mapElement.scale[0],mapElement.scale[1],mapElement.scale[2]);
+            Matrix.translateM(tempModelViewMatrix,0, mapaElement.pos[0], mapaElement.pos[1], mapaElement.pos[2]);
+            Matrix.scaleM(tempModelViewMatrix,0, mapaElement.scale[0], mapaElement.scale[1], mapaElement.scale[2]);
             GLES20.glUniformMatrix4fv(shader.getmModelMatrixHandle(),1,false,tempModelViewMatrix,0);
-            mapElement.dibujar(shader);
+            mapaElement.dibujar(shader);
         }
     }
 
@@ -103,7 +100,7 @@ public class MapaControler {
         return false;
     }
 
-    public MapElement getColisionElement() {
+    public MapaElement getColisionElement() {
         return colisionElement;
     }
 }

@@ -1,9 +1,11 @@
 package com.example.roi.testvuforia.graficos.figuras;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
 import com.example.roi.testvuforia.graficos.MiGLRender;
+import com.example.roi.testvuforia.graficos.ObjLoader.ObjReader;
 import com.example.roi.testvuforia.graficos.Shader;
 import com.example.roi.testvuforia.graficos.Textura;
 
@@ -86,9 +88,6 @@ public class Obj extends Figura{
 
         this.color=color;
     }
-
-
-
 
     //Projection * View * Model
 

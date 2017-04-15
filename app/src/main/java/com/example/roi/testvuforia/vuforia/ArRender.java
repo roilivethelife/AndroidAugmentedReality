@@ -4,34 +4,24 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.roi.testvuforia.LocationControler;
-import com.example.roi.testvuforia.R;
-import com.example.roi.testvuforia.graficos.MapElement;
-import com.example.roi.testvuforia.graficos.MapaControler;
-import com.example.roi.testvuforia.graficos.ObjLoader.ObjReader;
+import com.example.roi.testvuforia.graficos.Mapa.MapaControler;
 import com.example.roi.testvuforia.graficos.OnTouchInterface;
 import com.example.roi.testvuforia.graficos.Shader;
-import com.example.roi.testvuforia.graficos.Textura;
-import com.example.roi.testvuforia.graficos.figuras.Obj;
 import com.vuforia.COORDINATE_SYSTEM_TYPE;
 import com.vuforia.CameraCalibration;
 import com.vuforia.CameraDevice;
 import com.vuforia.Device;
 import com.vuforia.GLTextureUnit;
-import com.vuforia.ImageTarget;
 import com.vuforia.Matrix34F;
-import com.vuforia.Matrix44F;
 import com.vuforia.Mesh;
 import com.vuforia.Renderer;
 import com.vuforia.RenderingPrimitives;
 import com.vuforia.State;
 import com.vuforia.Tool;
-import com.vuforia.Trackable;
-import com.vuforia.TrackableResult;
 import com.vuforia.TrackerManager;
 import com.vuforia.VIDEO_BACKGROUND_REFLECTION;
 import com.vuforia.VIEW;
@@ -43,14 +33,8 @@ import com.vuforia.VideoMode;
 import com.vuforia.ViewList;
 import com.vuforia.Vuforia;
 
-import java.util.Locale;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import static com.example.roi.testvuforia.graficos.MapaControler.*;
-import static java.lang.Math.PI;
-import static java.lang.Math.floor;
 
 /**
  * Created by roi on 21/11/16.
@@ -64,7 +48,6 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
 
 
     private Context context;
-    private ArActivityInteface arActivityInteface;
 
     private Renderer mRenderer;
     private int currentView = VIEW.VIEW_SINGULAR;
@@ -77,9 +60,8 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
     private Shader shader;
 
 
-    public ArRender(Context context, ArActivityInteface arActivityInteface,LocationControler locControl,MapaControler mapaControler) {
+    public ArRender(Context context,LocationControler locControl,MapaControler mapaControler) {
         this.context = context;
-        this.arActivityInteface = arActivityInteface;
 
         //Obtenemos render de vuforia
         mRenderer = Renderer.getInstance();
@@ -251,7 +233,7 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
             0.0f, 0.0f, 0.0f, 1.0f};
     private static final float[] whiteColor = {1.0f, 1.0f, 1.0f, 1.0f};
 
-    public void renderVideoBackground() {
+    private void renderVideoBackground() {
         int vbVideoTextureUnit = 0;
         // Bind the video bg texture and get the Texture ID from Vuforia
         videoBackgroundTex.setTextureUnit(vbVideoTextureUnit);
