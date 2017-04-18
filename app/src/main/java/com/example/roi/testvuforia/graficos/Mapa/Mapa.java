@@ -1,6 +1,7 @@
 package com.example.roi.testvuforia.graficos.Mapa;
 
 import com.example.roi.testvuforia.graficos.AABB;
+import com.example.roi.testvuforia.graficos.Shader;
 
 import java.util.ArrayList;
 

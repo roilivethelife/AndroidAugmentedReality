@@ -46,7 +46,7 @@
                 android:checked="false" />
 
             <Button
-                android:text="Put"
+                android:text="GiroSolo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/button_ar_put_obj"

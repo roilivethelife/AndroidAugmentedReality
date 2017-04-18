@@ -9,57 +9,72 @@ import android.opengl.Matrix;
 
 import com.example.roi.testvuforia.graficos.Mapa.MapaElement;
 import com.example.roi.testvuforia.graficos.Mapa.MapaControler;
+import com.example.roi.testvuforia.vuforia.ArActivity;
 import com.example.roi.testvuforia.vuforia.ArRender;
 import com.vuforia.State;
 import com.vuforia.Tool;
 import com.vuforia.TrackableResult;
 
+import java.lang.reflect.Array;
+
 import static com.vuforia.TrackableResult.STATUS.*;
 import static java.lang.Math.abs;
+import static java.lang.Math.floor;
 
 /**
  * Created by roi on 14/12/16.
+ *
+ * Clase encargada de manejar la posición y orientacion del dipositivo
+ * Recibirá los datos desde Vuforia y los transformará a otras representaciones útiles
+ * Además procesará la lectura del giroscopio para ayudar a la orientacion si vuforia pierde el rastreo
  */
 
 public class LocationControler implements SensorEventListener{
+
+    //Variables Listener giroscopio
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private boolean listenerRegistered=false;
 
-    private MapaControler mapaControler;
+    ArActivity arActivity;
 
-    private float[] lastMatrixCamara;
-    private Quaternion quaternionGiroscopioListener;
-    private Quaternion quaternionGiroscopioCalib;
-    float angle1=0;
-    float angle2=0;
+    private float[] matrix;
+    private float[] calibGiroMatrix;//matriz para alinear el giroscopio con el marcador de vudoria
+    private Quaternion quaternionGiroscopioListener;//ultima lectura giroscopio
 
-    private boolean nuevaColision=false;
-    private boolean firstTracked;
 
-    private float[] vuforiaMatrix;
-    private float[] vuforiaMatrixCalib;
+    private boolean firstTracked;//traking realizado y calibración
 
-    public LocationControler(Context context, MapaControler mapaControler){
-        this.mapaControler=mapaControler;
-        lastMatrixCamara = new float[16];
+    private float[] vuforiaMatrix;//Lectura matriz de vuforia
+    private float[] lastVuforiaMatrix;//ultima lectura correcta matriz de vuforia
+
+
+    public LocationControler(Context context, MapaControler mapaControler, ArActivity arActivity){
+        matrix = new float[16];
         quaternionGiroscopioListener = new Quaternion();
-        quaternionGiroscopioCalib = new Quaternion();
         vuforiaMatrix = ArRender.identityMatrix.clone();
-        vuforiaMatrixCalib = ArRender.identityMatrix.clone();
+        lastVuforiaMatrix = ArRender.identityMatrix.clone();
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+        this.arActivity = arActivity;
+        calibGiroMatrix=ArRender.identityMatrix.clone();
     }
 
-    public void onStart(){
+    /**
+     * Debe ser llamado cuando necesitamos iniciar el controlador
+     */
+    public void startControler(){
         if(!listenerRegistered) {
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);//Una por segundo
             listenerRegistered=true;
         }
     }
 
-    public void onStop(){
+    /**
+     * Debe ser llamado cuando no se vaya a usar el controlador
+     */
+    public void stopControler(){
         if (listenerRegistered) {
             mSensorManager.unregisterListener(this);
             listenerRegistered=false;
@@ -67,6 +82,89 @@ public class LocationControler implements SensorEventListener{
 
     }
 
+
+    /**
+     * Función a llamar para actualizar la información sobre la orientación y posición
+     * @param state estado obtenido de vuforia: UNKNOWN, TRACKED, EXTENDED_TRACKED
+     * @return
+     */
+    public float[] updateLocation(State state){
+        int resultType = UNKNOWN;
+
+        //Obtener estado empleando el primer trackableResult
+        if(state.getNumTrackableResults()>0){
+            TrackableResult result = state.getTrackableResult(0);
+            vuforiaMatrix=Tool.convertPose2GLMatrix(result.getPose())
+                    .getData();
+            resultType = result.getStatus();
+        }
+        switch (resultType) {
+            case TRACKED://Imagen con buena precision
+
+                //Guardar giroCalib y posCalib
+                //Hace falta invertir matriz vuforia asi que la guardamos y ya invertimos mas tarde
+                //de ser necesario
+                //tambien guardamos en que estado estaba el giroscopio para poder conocer
+                //la diferencia entre vuforia y el giroscopio
+                lastVuforiaMatrix = vuforiaMatrix.clone();
+                float distancia = (vuforiaMatrix[12]+vuforiaMatrix[13]+vuforiaMatrix[14]);
+                if(distancia<50){//Calibramos
+                    firstTracked = true;
+                    float[] giroMatrix = new float[16];
+                    float[] sumaMatrix = new float[16];
+                    //lectura rotacion giroscopio
+                    SensorManager.getRotationMatrixFromVector(giroMatrix,quaternionGiroscopioListener.toFloat());
+                    //lectura rotacion vuforia
+                    float[] vuforiaRotMatrix = vuforiaMatrix.clone();
+                    vuforiaRotMatrix[12]=0;
+                    vuforiaRotMatrix[13]=0;
+                    vuforiaRotMatrix[14]=0;
+                    //rotamos el giro con la rotacion actual de vuforia, para trasponer y poder deshacer el giro luego
+                    Matrix.multiplyMM(sumaMatrix,0,giroMatrix,0,vuforiaRotMatrix,0);
+                    Matrix.transposeM(calibGiroMatrix,0,sumaMatrix,0);
+                }
+                //Return matrixVuforia
+                matrix=vuforiaMatrix;
+                break;
+
+            case EXTENDED_TRACKED://imagen con precision media
+                if(firstTracked) {
+                    //obtener posCamara
+                    float[] posCamara = invertTransformationMatrix(vuforiaMatrix);
+                    matrix = giroQuaternion2VuforiaGL(-posCamara[12],-posCamara[13],-posCamara[14]);
+                    break;
+                } else {
+                    matrix = ArRender.identityMatrix;
+                }
+                break;
+            case UNKNOWN:
+            default:
+                //utilizamos ultima posicion conocida y giro
+                if(firstTracked) {
+                    //obtener posCamara
+                    float[]posCamara = invertTransformationMatrix(matrix);
+                    matrix = giroQuaternion2VuforiaGL(-posCamara[12],-posCamara[13],-posCamara[14]);
+                    break;
+                } else {
+                    matrix = ArRender.identityMatrix;
+                }
+        }
+        StringBuilder strBuild = new StringBuilder();
+        for (int i = 0,k=0; i < 4; i++) {
+            for (int j = 0; j < 4; j++,k++) {
+                strBuild.append(String.format("%.1f", matrix[k])).append(' ');
+            }
+            strBuild.append('\n');
+        }
+        arActivity.setTextViewText(strBuild.toString());
+        return matrix;
+    }
+
+    /**
+     * Helper invertir matriz
+     * @param matrix
+     * @return
+     */
     public static float[] invertTransformationMatrix(float[] matrix){
         if (matrix.length!=16) throw new RuntimeException("Matrix length!=16");
         float[] ret = matrix.clone();
@@ -84,104 +182,40 @@ public class LocationControler implements SensorEventListener{
         return ret;
     }
 
-    public void setAngle(float x,float z){
-        this.angle1 = x;
-        this.angle2 = z;
+
+    /**
+     * Utilizar rotacion del giroscopio y posicon de camara indicada
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    private float[] giroQuaternion2VuforiaGL(float x, float y, float z){
+        float[] matrixTempt = ArRender.identityMatrix.clone();
+        float[] giroMatrixCorrected = new float[16];
+        float[] giroMatrix = new float[16];
+        float[] scaleMatrix = ArRender.identityMatrix.clone();
+        Matrix.scaleM(scaleMatrix,0,-1,-1,-1);
+        //utilizamos posicion de vuforia y giro giroscopio
+        SensorManager.getRotationMatrixFromVector(giroMatrix,quaternionGiroscopioListener.toFloat());
+        //Restar calibracion
+        Matrix.multiplyMM(giroMatrixCorrected,0,calibGiroMatrix,0,giroMatrix,0);
+        //giroMatrix = scaleMatrix*giroMatrix*scaleMatrix
+        float[] tmpMatrix=new float[16];
+        Matrix.multiplyMM(tmpMatrix,0,giroMatrixCorrected,0,scaleMatrix,0);
+        Matrix.multiplyMM(giroMatrixCorrected,0,scaleMatrix,0,tmpMatrix,0);
+        Matrix.transposeM(tmpMatrix,0,giroMatrixCorrected,0);
+        Matrix.translateM(matrixTempt,0,x,y,z);
+
+        float[] returnMatrix = new float[16];
+        Matrix.multiplyMM(returnMatrix,0,tmpMatrix,0,matrixTempt,0);
+        return returnMatrix;
     }
 
-    public float[] onFrame(State state){
-        int resultType = UNKNOWN;
-
-        int numResults = state.getNumTrackableResults();
-        for (int tIdx = 0; tIdx < numResults; tIdx++) {
-            TrackableResult result = state.getTrackableResult(tIdx);
-            vuforiaMatrix=Tool.convertPose2GLMatrix(result.getPose())
-                    .getData();
-            resultType = result.getStatus();
-        }
-        float[] returnMatrix = null;
-        switch (resultType){
-            case TRACKED:
-                firstTracked = true;
-                //Guardar posicion giroscopio correcta y giro matrix vuforia correcta
-                quaternionGiroscopioCalib = quaternionGiroscopioListener.clone();
-                vuforiaMatrixCalib = vuforiaMatrix.clone();
-                lastMatrixCamara= vuforiaMatrix;
-//                float[] cameraMatrix = invertTransformationMatrix(vuforiaMatrix);
-//                arActivityInteface.setTextViewText(cameraMatrix[12]+" "+cameraMatrix[13]+" "+cameraMatrix[14]);
-                break;
-            case EXTENDED_TRACKED:
-            case UNKNOWN:
-            default:
-                //utilizamos ultima posicion conocida y giro
-                //if(firstTracked){
-                    //SensorManager.getRotationMatrixFromVector();
-                    float[] calibMatrix = new float[16];
-                    /*Quaternion quatGiroCamara = quaternionGiroscopioCalib.invertQuaternionCopy();
-                    quatGiroCamara.mul(quaternionGiroscopioListener);
-                    float[] calibMatrix = new float[16];
-                    SensorManager.getRotationMatrixFromVector(calibMatrix,quatGiroCamara.toFloat());*/
-
-                    //invertimos ultima matriz de cámara->Utilizar posicion de esta
-                    //float[] cameraMatrixVuforia = invertTransformationMatrix(vuforiaMatrix);
-                    //invertimos matriz de calibracion->Utilizar giro de esta
-                    //float[] cameraMatrixVuforiaCalib = invertTransformationMatrix(vuforiaMatrixCalib);
-                    float[] cameraMatrixVuforiaCalib = ArRender.identityMatrix.clone();
-                    //copiamos posicion
-
-                    cameraMatrixVuforiaCalib[12]=0;//cameraMatrixVuforia[12];
-                    cameraMatrixVuforiaCalib[13]=0;//cameraMatrixVuforia[13];
-                    cameraMatrixVuforiaCalib[14]=35;//cameraMatrixVuforia[14];
-                    Matrix.rotateM(cameraMatrixVuforiaCalib,0,180,1,0,0);
-                    //en cameraMatrixVuforiaCalib esta la matrix de la camara con la ultima posicion conocida en T1
-                    //y con el ultimo giro conocido en T0
-                    //ahora giraremos esta matriz segun la diferencia de quaternion de T0 a T2(ahora)
-                    //y tendremos la matriz con el giro actualizado según el giroscopio
-
-                    Quaternion q = new Quaternion();
-                    angle2=-angle2;
-                    q.setEulerAngles(angle1, angle2,0);
-                    //arActivityInteface.setTextViewText("Angulos: 1="+angle1+" 2="+angle2+"\nquat="+q.toString(2));
-                    SensorManager.getRotationMatrixFromVector(calibMatrix,q.toFloat());
-
-                    float[] matrixfinal = new float[16];
-                    Matrix.multiplyMM(matrixfinal,0,cameraMatrixVuforiaCalib,0,calibMatrix,0);
-                    //Matrix final es la matrix de la camara con los giros actualizados segun el giroscopio
-
-                    lastMatrixCamara= invertTransformationMatrix(matrixfinal);
-                //}else{
-                //    lastMatrixCamara= ArRender.identityMatrix;
-                //}
-        }
-        if(nuevaColision){
-            float[] camInv = invertTransformationMatrix(lastMatrixCamara);
-            float[] camPos = new float[3];
-            float[] camDir = new float[3];
-            float[] colPoint = new float[3];
-            camPos[0]=lastMatrixCamara[12];
-            camPos[1]=lastMatrixCamara[13];
-            camPos[2]=lastMatrixCamara[14];
-            camDir[0]=lastMatrixCamara[8];
-            camDir[1]=lastMatrixCamara[9];
-            camDir[2]=lastMatrixCamara[10];
-            if(mapaControler.colisionRayoPared(camPos,camDir,colPoint)){
-                MapaElement mapaElement = mapaControler.getColisionElement();
-                mapaElement.pos[0]=colPoint[0];
-                mapaElement.pos[1]=colPoint[1];
-                mapaElement.pos[2]=colPoint[2];
-                mapaElement.visible=true;
-            }
-            nuevaColision=false;
-        }
-
-
-        return lastMatrixCamara;
-    }
-
-    public void nuevaColision(){
-        nuevaColision=true;
-    }
-
+    /**
+     * Funcion para recibir los datos de orientación desde el giroscopio
+     * @param event
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType()== Sensor.TYPE_GAME_ROTATION_VECTOR) {
@@ -199,6 +233,7 @@ public class LocationControler implements SensorEventListener{
         }
     }
 
+    //No usada
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 

@@ -1,6 +1,7 @@
 package com.example.roi.testvuforia.vuforia;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -77,7 +78,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setRequestedOrientation(SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         //inicialización Vuforia
         //TODO:(opcional) crear una Task para ejecutar este código
@@ -94,7 +95,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
         TrackerManager tManager = TrackerManager.getInstance();
         objectTracker = (ObjectTracker) tManager.initTracker(ObjectTracker.getClassType());
 
-        //cargar datos del tracker: leer archivo que contiene las imágenes a rastrear
+        //cargarNuevoMapa datos del tracker: leer archivo que contiene las imágenes a rastrear
         currentDataSet = objectTracker.createDataSet();
         currentDataSet.load("Prueba.xml", STORAGE_TYPE.STORAGE_APPRESOURCE);
         objectTracker.activateDataSet(currentDataSet);
@@ -114,7 +115,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
 
         //Crear instancias de MapaControler, LocationControler
         mapaControler = new MapaControler("Mapa",this);
-        locationControler=new LocationControler(this,mapaControler);
+        locationControler=new LocationControler(this,mapaControler,this);
         glView = new MiGLSurfaceView(this);
         arRender = new ArRender(this,locationControler,mapaControler);
         glView.setRenderer(arRender);
@@ -135,7 +136,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
             glView.onPause();
         }
 
-        locationControler.onStop();
+        locationControler.stopControler();
         Vuforia.onPause();
         objectTracker.stop();
     }
@@ -145,7 +146,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
         super.onResume();
 
         Vuforia.onResume();
-        locationControler.onStart();
+        locationControler.startControler();
 
         if (glView != null) {
             glView.setVisibility(View.VISIBLE);
@@ -196,8 +197,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
                 finish();//Terminamos activity
                 break;
             case R.id.button_ar_put_obj:
-                //TODO: put obj;
-                locationControler.nuevaColision();
+                //locationControler.giroSolo();
                 break;
         }
     }
@@ -274,6 +274,13 @@ public class ArActivity extends Activity implements View.OnClickListener{
 
         protected void onPostExecute(Boolean result){
 
+        }
+    }
+
+    public void setTextViewText(String str) {
+        if(str!=null){
+            Message msg = Message.obtain(handler,MSG_UPDATE_TEXTVIEW,str);
+            handler.sendMessage(msg);
         }
     }
 }

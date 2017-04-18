@@ -43,8 +43,6 @@ import javax.microedition.khronos.opengles.GL10;
 public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
 
     private static final String LOGTAG = "ARRender";
-    private float posicionZ=2;
-    private float posicionX=0;
 
 
     private Context context;
@@ -58,6 +56,7 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
     private LocationControler locControl;
     private MapaControler mapaControler;
     private Shader shader;
+
 
 
     public ArRender(Context context,LocationControler locControl,MapaControler mapaControler) {
@@ -76,7 +75,7 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
         videoBackgroundTex = new GLTextureUnit();
 
         this.shader= new Shader(context);
-        mapaControler.cargar();
+        mapaControler.cargarNuevoMapa();
     }
 
     @Override
@@ -163,7 +162,6 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
         state = TrackerManager.getInstance().getStateUpdater().updateState();
         mRenderer.begin(state);
         float[] projectionMatrix = vuforiaOnDrawFramePre();
-        //Matrix.rotateM(projectionMatrix,0,180,1,0,0);
         //dibujamos video en el fondo
         renderVideoBackground();
 
@@ -171,10 +169,7 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
         //VIDEO dibujado: activamos depth test
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glUniformMatrix4fv(shader.getmPVMatrixHandle(), 1, false, projectionMatrix, 0);
-
-
-        locControl.setAngle(posicionX,posicionZ);
-        float[] modelViewMatrix = locControl.onFrame(state);
+        float[] modelViewMatrix = locControl.updateLocation(state);
         mapaControler.dibujar(shader,modelViewMatrix);
         /*GLES20.glUniformMatrix4fv(shader.getmModelMatrixHandle(),1,false,modelViewMatrix,0);
         cubo.dibujar();*/
@@ -335,8 +330,8 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
                     float deltaX = (x - mPreviousX) / sensibility;
                     float deltaY = (y - mPreviousY) / sensibility;
 
-                    posicionX +=deltaX;
-                    posicionZ +=deltaY;
+                    //posicionX +=deltaX;
+                    ///posicionZ +=deltaY;
                 }
             }
 

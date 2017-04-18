@@ -23,7 +23,7 @@ public class MapaControler {
     private MapaElement colisionElement;
     private MapaElement habitacionElement;
 
-    private float[] tamHabitacion = {360,300,450};//cm
+    private float[] tamHabitacion = {18,15 ,15};//cm
     private float[] posicionReferencia = {180,120,0};//cm
 
 
@@ -42,7 +42,7 @@ public class MapaControler {
         this.context=context;
     }
 
-    public void cargar(){
+    public void cargarNuevoMapa(){
         MapaElement cuboCentro=new MapaElement("Centro", new ObjReader(context, R.raw.cubo).getObjeto());
         mapaElements.add(cuboCentro);
 
@@ -51,18 +51,13 @@ public class MapaControler {
         mapaElements.add(colisionElement);
 
 
-        habitacionElement = new MapaElement("Wireframe",new ObjReader(context, R.raw.paredes).getObjeto());
+        habitacionElement = new MapaElement("Wireframe",new ObjReader(context, R.raw.pared).getObjeto());
         habitacionElement.scale=Arrays.copyOf(tamHabitacion,tamHabitacion.length);
-        habitacionElement.obj.setModoDibujado(GLES20.GL_LINE_LOOP);
+        //habitacionElement.obj.setModoDibujado(GLES20.);
         mapaElements.add(habitacionElement);
     }
 
-    public boolean isInside(float[] camPos){
-        //x=ancho, y=alto, z=largo
-        return camPos[0]>0.0f && camPos[0]<tamHabitacion[0] &&
-                camPos[1]>0.0f && camPos[1]<tamHabitacion[1] &&
-                camPos[2]>0.0f && camPos[2]<tamHabitacion[2];
-    }
+
 
     public void addObject(MapaElement mapaElement){
         mapaElements.add(mapaElement);
@@ -78,27 +73,7 @@ public class MapaControler {
         }
     }
 
-    /**
-     *
-     * @param camPos [IN]posicion de la camara
-     * @param camDir [IN]direcion de la camara
-     * @param colisionPoint [OUT] float[3] punto de colision
-     * @return boolean
-     */
-    public boolean colisionRayoPared(float[] camPos, float[] camDir, float[] colisionPoint){
-        if(!isInside(camPos)){
-            return false;
-        }
-        AABB.Ray3D camara = new AABB.Ray3D(AABB.Vec3D.fromVector(camPos), AABB.Vec3D.fromVector(camDir));
-        AABB.Vec3D colision = aabb.intersectsRay(camara);
-        if(colision!=null){
-            colisionPoint[0]=colision.x;
-            colisionPoint[1]=colision.y;
-            colisionPoint[2]=colision.z;
-            return true;
-        }
-        return false;
-    }
+
 
     public MapaElement getColisionElement() {
         return colisionElement;
