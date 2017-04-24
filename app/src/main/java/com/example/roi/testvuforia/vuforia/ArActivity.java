@@ -1,6 +1,7 @@
 package com.example.roi.testvuforia.vuforia;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.AsyncTask;
@@ -14,11 +15,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 
+import com.example.roi.testvuforia.AppInstance;
 import com.example.roi.testvuforia.LocationControler;
 import com.example.roi.testvuforia.R;
+import com.example.roi.testvuforia.graficos.Mapa.Mapa;
 import com.example.roi.testvuforia.graficos.Mapa.MapaControler;
 import com.example.roi.testvuforia.graficos.MiGLSurfaceView;
 import com.vuforia.CameraDevice;
@@ -30,7 +34,7 @@ import com.vuforia.Trackable;
 import com.vuforia.TrackerManager;
 import com.vuforia.Vuforia;
 
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+import java.util.Map;
 
 
 public class ArActivity extends Activity implements View.OnClickListener{
@@ -111,15 +115,25 @@ public class ArActivity extends Activity implements View.OnClickListener{
                     + trackable.getUserData());
         }
 
+        Intent data = getIntent();
+        Mapa map = null;
+        if(data!=null && data.getExtras()!=null) {
+            map = (Mapa) data.getExtras().getSerializable("MAPA");
+            if(map==null){
+                Toast.makeText(this,"Error al iniciar AR: error al abrir el mapa",Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
 
 
         //Crear instancias de MapaControler, LocationControler
-        mapaControler = new MapaControler("Mapa",this);
+        mapaControler = new MapaControler(this,map);
         locationControler=new LocationControler(this,mapaControler,this);
         glView = new MiGLSurfaceView(this);
         arRender = new ArRender(this,locationControler,mapaControler);
         glView.setRenderer(arRender);
         glView.setOnTouchInterface(arRender);
+
 
         //Hay que añadirlo antes de encender el video y de configurar el background (en el sample primero configura el background? wtf)
         RelativeLayout relLayout = (RelativeLayout) findViewById(R.id.relativeLayoutGL);
@@ -232,55 +246,11 @@ public class ArActivity extends Activity implements View.OnClickListener{
         };
     }
 
-    // An async task to initialize Vuforia asynchronously.
-    private class InitVuforiaTask extends AsyncTask<Void, Integer, Boolean> {
-        Activity activity;
-        int mProgressValue;
-        public InitVuforiaTask(Activity activity){
-            this.activity=activity;
-        }
-
-        protected Boolean doInBackground(Void... params){
-            Vuforia.setInitParameters(activity, Vuforia.GL_20, licenseKey);
-            do
-            {
-                // Vuforia.init() blocks until an initialization step is
-                // complete, then it proceeds to the next step and reports
-                // progress in percents (0 ... 100%).
-                // If Vuforia.init() returns -1, it indicates an error.
-                // Initialization is done when progress has reached 100%.
-                mProgressValue = Vuforia.init();
-
-                // Publish the progress value:
-                publishProgress(mProgressValue);
-
-                // We check whether the task has been canceled in the
-                // meantime (by calling AsyncTask.cancel(true)).
-                // and bail out if it has, thus stopping this thread.
-                // This is necessary as the AsyncTask will run to completion
-                // regardless of the status of the component that
-                // started is.
-            } while (!isCancelled() && mProgressValue >= 0
-                    && mProgressValue < 100);
-
-            return (mProgressValue > 0);
-        }
-
-        protected void onProgressUpdate(Integer... values)
-        {
-            // Do something with the progress value "values[0]", e.g. update
-            // splash screen, progress bar, etc.
-        }
-
-        protected void onPostExecute(Boolean result){
-
-        }
-    }
-
     public void setTextViewText(String str) {
         if(str!=null){
             Message msg = Message.obtain(handler,MSG_UPDATE_TEXTVIEW,str);
             handler.sendMessage(msg);
         }
     }
+
 }

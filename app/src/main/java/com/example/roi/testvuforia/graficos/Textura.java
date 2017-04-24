@@ -5,16 +5,30 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.util.Log;
+
+import com.example.roi.testvuforia.AppInstance;
 
 /**
  * Created by roi on 18/11/16.
  */
 
 public class Textura {
+    private boolean isTexturaCargada;
+    private int resourceId;
+
     private int textureHandle;
 
-    public Textura(Context context, int resourceId){
+
+    public Textura(int resourceId){
+        isTexturaCargada = false;
+        this.resourceId =resourceId;
+        textureHandle = 0;
+    }
+
+    private void cargarTextura(){
         int[] textureHandleTemp = new int[1];
+        Context context = AppInstance.getInstance().getContext();
 
         GLES20.glGenTextures(1, textureHandleTemp, 0);
 
@@ -44,9 +58,14 @@ public class Textura {
             throw new RuntimeException("Error loading texture.");
         }
         textureHandle=textureHandleTemp[0];
+        Log.d("Textura","Textura cargada");
     }
 
     public int getTextureHandle() {
+        if(!isTexturaCargada) {
+            cargarTextura();
+            isTexturaCargada=true;
+        }
         return textureHandle;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.roi.testvuforia.graficos;
+package com.example.roi.testvuforia.graficos.figuras;
 
 import android.content.Context;
 import android.graphics.Bitmap;

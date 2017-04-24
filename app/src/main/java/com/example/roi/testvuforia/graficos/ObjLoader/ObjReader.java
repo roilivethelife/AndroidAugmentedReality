@@ -73,7 +73,7 @@ public class ObjReader {
 
 
 
-    public ObjReader(Context context, int resourceId) {
+    public ObjReader(Context context, int resourceId) throws IOException{
         this.context = context;
         vertexCoord = new ArrayList<>();
         vertexNormal = new ArrayList<>();
@@ -89,92 +89,88 @@ public class ObjReader {
         return objeto;
     }
 
-    private void parseObjFile(int resourceId) {
+    private void parseObjFile(int resourceId) throws IOException{
         final InputStream inputStream = context.getResources().openRawResource(resourceId);
         final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
         String line;
         int lineCount = 0;
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                line = line.trim();
-                if (line.length() == 0) {
-                    continue;
-                }
-                // NOTE: we don't check for the space after the char
-                // because sometimes it's not there - most notab
-                // ly in the
-                // grouupname, we seem to get a lot of times where we have
-                // "g\n", i.e. setting the group name to blank (or
-                // default?)
-
-
-                if (line.startsWith("#")) // comment
-                {
-                    continue;
-                } else if (line.startsWith(OBJ_VERTEX_TEXTURE)) {
-                    float[] values = StringUtils.parseFloatList(2, line, OBJ_VERTEX_TEXTURE.length());
-                    vertexTexture.add(values[0]);
-                    vertexTexture.add(values[1]);
-                } else if (line.startsWith(OBJ_VERTEX_NORMAL)) {
-                    float[] values = StringUtils.parseFloatList(3, line, OBJ_VERTEX_NORMAL.length());
-                    vertexNormal.add(values[0]);
-                    vertexNormal.add(values[1]);
-                    vertexNormal.add(values[2]);
-                } else if (line.startsWith(OBJ_VERTEX)) {
-                    float[] values = StringUtils.parseFloatList(3, line, OBJ_VERTEX.length());
-                    vertexCoord.add(values[0]);
-                    vertexCoord.add(values[1]);
-                    vertexCoord.add(values[2]);
-                } else if (line.startsWith(OBJ_FACE)) {
-                    line = line.substring(OBJ_FACE.length()).trim();
-                    int[] verticeIndexAry = StringUtils.parseListVerticeNTuples(line, 3);
-                    for (int tmp : verticeIndexAry) {
-                        faceList.add(tmp);
-                    }
-
-                } else if (line.startsWith(OBJ_GROUP_NAME)) {
-                    //processGroupName(line);
-                    continue;
-                } else if (line.startsWith(OBJ_OBJECT_NAME)) {
-                    //processObjectName(line);
-                    continue;
-                } else if (line.startsWith(OBJ_SMOOTHING_GROUP)) {
-                    //processSmoothingGroup(line);
-                } else if (line.startsWith(OBJ_POINT)) {
-                    //processPoint(line);
-                } else if (line.startsWith(OBJ_LINE)) {
-                    //processLine(line);
-                } else if (line.startsWith(OBJ_MAPLIB)) {
-                    //processMapLib(line);
-                } else if (line.startsWith(OBJ_USEMAP)) {
-                    //processUseMap(line);
-                } else if (line.startsWith(OBJ_USEMTL)) {
-                    //processUseMaterial(line);
-                } else if (line.startsWith(OBJ_MTLLIB)) {
-                    processMaterialLib(line);
-                } else {
-                    Log.d("ObjReadParseLine", "line " + lineCount + " unknown line |" + line + "|");
-                }
-                lineCount++;
-
+        while ((line = bufferedReader.readLine()) != null) {
+            line = line.trim();
+            if (line.length() == 0) {
+                continue;
             }
-        } catch (IOException e) {
-            return;
+            // NOTE: we don't check for the space after the char
+            // because sometimes it's not there - most notab
+            // ly in the
+            // grouupname, we seem to get a lot of times where we have
+            // "g\n", i.e. setting the group name to blank (or
+            // default?)
+
+
+            if (line.startsWith("#")) // comment
+            {
+                continue;
+            } else if (line.startsWith(OBJ_VERTEX_TEXTURE)) {
+                float[] values = StringUtils.parseFloatList(2, line, OBJ_VERTEX_TEXTURE.length());
+                vertexTexture.add(values[0]);
+                vertexTexture.add(values[1]);
+            } else if (line.startsWith(OBJ_VERTEX_NORMAL)) {
+                float[] values = StringUtils.parseFloatList(3, line, OBJ_VERTEX_NORMAL.length());
+                vertexNormal.add(values[0]);
+                vertexNormal.add(values[1]);
+                vertexNormal.add(values[2]);
+            } else if (line.startsWith(OBJ_VERTEX)) {
+                float[] values = StringUtils.parseFloatList(3, line, OBJ_VERTEX.length());
+                vertexCoord.add(values[0]);
+                vertexCoord.add(values[1]);
+                vertexCoord.add(values[2]);
+            } else if (line.startsWith(OBJ_FACE)) {
+                line = line.substring(OBJ_FACE.length()).trim();
+                int[] verticeIndexAry = StringUtils.parseListVerticeNTuples(line, 3);
+                for (int tmp : verticeIndexAry) {
+                    faceList.add(tmp);
+                }
+
+            } else if (line.startsWith(OBJ_GROUP_NAME)) {
+                //processGroupName(line);
+                continue;
+            } else if (line.startsWith(OBJ_OBJECT_NAME)) {
+                //processObjectName(line);
+                continue;
+            } else if (line.startsWith(OBJ_SMOOTHING_GROUP)) {
+                //processSmoothingGroup(line);
+            } else if (line.startsWith(OBJ_POINT)) {
+                //processPoint(line);
+            } else if (line.startsWith(OBJ_LINE)) {
+                //processLine(line);
+            } else if (line.startsWith(OBJ_MAPLIB)) {
+                //processMapLib(line);
+            } else if (line.startsWith(OBJ_USEMAP)) {
+                //processUseMap(line);
+            } else if (line.startsWith(OBJ_USEMTL)) {
+                //processUseMaterial(line);
+            } else if (line.startsWith(OBJ_MTLLIB)) {
+                processMaterialLib(line);
+            } else {
+                Log.d("ObjReadParseLine", "line " + lineCount + " unknown line |" + line + "|");
+            }
+            lineCount++;
+
         }
 
         //Por ultimo cargamos la textura si corresponde
         if(hasTexture){
             String textureFilenameWoExtension = textureFilename.substring(0, textureFilename.lastIndexOf('.'));
             int resID= context.getResources().getIdentifier(textureFilenameWoExtension,"drawable",context.getPackageName());
-            textura=new Textura(context,resID);
+            textura=new Textura(resID);
         }else{
-            textura=new Textura(context, R.drawable.texture_default);
+            textura=new Textura(R.drawable.texture_default);
         }
     }
 
-    private void processMaterialLib(String line) throws FileNotFoundException, IOException {
+    private void processMaterialLib(String line) throws IOException {
         String[] matlibnames = StringUtils.parseWhitespaceList(line.substring(OBJ_MTLLIB.length()).trim());
 
         if (null != matlibnames) {
@@ -191,7 +187,7 @@ public class ObjReader {
     // ----------------------------------------------------------------------
     // material file processing
     // ----------------------------------------------------------------------
-    private void parseMtlFile(String mtlFilename) throws FileNotFoundException, IOException {
+    private void parseMtlFile(String mtlFilename) throws IOException {
         int lineCount = 0;
         //String mtlFilenameWOExtension = mtlFilename.substring(0, mtlFilename.lastIndexOf('.'));
         InputStream inputStream = context.getResources().openRawResource(

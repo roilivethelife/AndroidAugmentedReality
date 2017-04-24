@@ -75,7 +75,7 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
         videoBackgroundTex = new GLTextureUnit();
 
         this.shader= new Shader(context);
-        mapaControler.cargarNuevoMapa();
+        MapaControler.createLoadDefaultMap();
     }
 
     @Override

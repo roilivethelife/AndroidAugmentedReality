@@ -7,5 +7,5 @@ import android.view.MotionEvent;
  */
 
 public interface OnTouchInterface {
-    public boolean onCustomTouchEvent(MotionEvent event);
+    boolean onCustomTouchEvent(MotionEvent event);
 }

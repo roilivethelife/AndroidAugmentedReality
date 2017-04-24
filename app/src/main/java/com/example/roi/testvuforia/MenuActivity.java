@@ -10,18 +10,18 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.example.roi.testvuforia.graficos.OpenGLActivity;
+import com.example.roi.testvuforia.graficos.Mapa.Mapa;
+import com.example.roi.testvuforia.graficos.Mapa.MapaControler;
 import com.example.roi.testvuforia.vuforia.ArActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends Activity {
-    private static final String LOGTAG = "MainActivity";
+public class MenuActivity extends Activity {
+    private static final String LOGTAG = "MenuActivity";
 
-
-    private Button btnOpenGLActivity;
     private Button btnArActivity;
 
 
@@ -35,43 +35,39 @@ public class MainActivity extends Activity {
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_NETWORK_STATE = 3;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 4;
 
+    private static final int RESULT_PICK_MAP = 1;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         //comprueba que permisos están activos y pide al usuario
         comprobarPedirPermisos();
+        AppInstance.getInstance().setContext(this);
 
-
-        btnOpenGLActivity = (Button) findViewById(R.id.btn_openglactivity);
-        btnOpenGLActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (permisosOk()) {
-                    Intent intent = new Intent(view.getContext(), OpenGLActivity.class);
-                    view.getContext().startActivity(intent);
-                } else {
-                    Log.d(LOGTAG, "Error boton click: no estan todos los permisos");
-                    //TODO: mensaje al usuario
-                }
-            }
-        });
 
         btnArActivity = (Button) findViewById(R.id.btn_aractivity);
         btnArActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (permisosOk()) {
-                    Intent intent = new Intent(view.getContext(), ArActivity.class);
-                    view.getContext().startActivity(intent);
+                    AppInstance.getInstance().leerObjetos();
+                    Intent intent = new Intent(view.getContext(), SelectMapActivity.class);
+                    intent.putExtra("TITULO","Seleccione el mapa a utilizar:");
+                    startActivityForResult(intent, RESULT_PICK_MAP);
                 } else {
                     Log.d(LOGTAG, "Error boton click: no estan todos los permisos");
                     //TODO: mensaje al usuario
                 }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     private void comprobarPedirPermisos() {
@@ -106,7 +102,7 @@ public class MainActivity extends Activity {
             permissionReadExternalStorage = true;
         }
         if(!aPermissions.isEmpty()) {
-            String[] sPermissions = (String[]) aPermissions.toArray(new String[aPermissions.size()]);
+            String[] sPermissions = aPermissions.toArray(new String[aPermissions.size()]);
             //pedir todos los permisos del tiron
             ActivityCompat.requestPermissions(this, sPermissions,
                     MY_PERMISSIONS_MULTIPLE_REQUEST);
@@ -175,6 +171,30 @@ public class MainActivity extends Activity {
                 if(!permissionCamera) permissionCamera=(hashMap.get(Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED);
                 if(!permissionReadExternalStorage) permissionReadExternalStorage=(hashMap.get(Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED);
                 if(!permissionAccessNetworkState) permissionAccessNetworkState=(hashMap.get(Manifest.permission.ACCESS_NETWORK_STATE)==PackageManager.PERMISSION_GRANTED);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode==RESULT_CANCELED){
+            Toast.makeText(this, "No se ha seleccionado ningún mapa", Toast.LENGTH_SHORT).show();
+        }else {
+            switch (requestCode) {
+                case RESULT_PICK_MAP:
+                    Mapa map=null;
+                    if(data!=null && data.getExtras()!=null) {
+                        map = (Mapa) data.getExtras().getSerializable("MAPA");
+                    }
+                    if(map!=null) {
+                        Toast.makeText(this, "Mapa seleciconado:" + map.getNombre(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, ArActivity.class);
+                        intent.putExtra("MAPA",map);
+                        startActivity(intent);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

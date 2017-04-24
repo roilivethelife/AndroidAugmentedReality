@@ -4,6 +4,8 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 
+import com.example.roi.testvuforia.graficos.OnTouchInterface;
+
 /**
  * Created by roi on 5/11/16.
  */

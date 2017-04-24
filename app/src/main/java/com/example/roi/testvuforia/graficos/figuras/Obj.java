@@ -1,11 +1,8 @@
 package com.example.roi.testvuforia.graficos.figuras;
 
-import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import com.example.roi.testvuforia.graficos.MiGLRender;
-import com.example.roi.testvuforia.graficos.ObjLoader.ObjReader;
 import com.example.roi.testvuforia.graficos.Shader;
 import com.example.roi.testvuforia.graficos.Textura;
 
@@ -97,13 +94,10 @@ public class Obj extends Figura{
      */
     @Override
     public void dibujar(Shader shader) {
-        MiGLRender.checkGLError("pre");
         //Configuramos vertices
         vertexBuffer.position(0);//posicion inicial del primer vertice
         GLES20.glEnableVertexAttribArray(shader.getmCoordHandle());
         GLES20.glVertexAttribPointer(shader.getmCoordHandle(), 3, GLES20.GL_FLOAT, false, 32, vertexBuffer);
-        MiGLRender.checkGLError("1");
-
         //TODO: configurar normal( no necesario sin luces)
 
         //Configuramos textura
@@ -114,20 +108,16 @@ public class Obj extends Figura{
 
         //Configuramos color
         GLES20.glUniform4fv(shader.getmColorHandle(),1,color,0);
-        MiGLRender.checkGLError("3");
 
         //Activamos textura
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textura.getTextureHandle());
         GLES20.glUniform1i(shader.getmTexUniformHandle(), 0);
-        MiGLRender.checkGLError("4");
         // Draw the triangle
         GLES20.glDrawArrays(modoDibujado,0,numVertices);
-        MiGLRender.checkGLError("5");
 
         GLES20.glDisableVertexAttribArray(shader.getmCoordHandle());
         GLES20.glDisableVertexAttribArray(shader.getmTexCoordinateHandle());
-        MiGLRender.checkGLError("6");
     }
 
     public void setModoDibujado(int modoDibujado) {
