@@ -20,6 +20,12 @@ public class Textura {
     private int textureHandle;
 
 
+    private Textura(int textureHandle, int setzero){
+        this.textureHandle = textureHandle;
+        isTexturaCargada = true;
+        resourceId = 0;
+    }
+
     public Textura(int resourceId){
         isTexturaCargada = false;
         this.resourceId =resourceId;
@@ -67,5 +73,10 @@ public class Textura {
             isTexturaCargada=true;
         }
         return textureHandle;
+    }
+
+    @Override
+    public Textura clone()  {
+        return new Textura(textureHandle,0);
     }
 }

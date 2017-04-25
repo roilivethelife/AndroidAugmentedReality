@@ -1,11 +1,11 @@
-package com.example.roi.testvuforia.graficos.ObjLoader;
+package com.example.roi.testvuforia.graficos.figuras.ObjLoader;
 
 
 import android.content.Context;
 import android.util.Log;
 
+import com.example.roi.testvuforia.AppInstance;
 import com.example.roi.testvuforia.R;
-import com.example.roi.testvuforia.graficos.Shader;
 import com.example.roi.testvuforia.graficos.Textura;
 import com.example.roi.testvuforia.graficos.figuras.Obj;
 
@@ -14,6 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 public class ObjReader {
@@ -60,7 +63,6 @@ public class ObjReader {
     public final static String MTL_REFL_TYPE_CUBE_RIGHT = "cube_right";
 
 
-    private Context context;
     private ArrayList<Float> vertexCoord;
     private ArrayList<Float> vertexNormal;
     private ArrayList<Float> vertexTexture;
@@ -69,24 +71,49 @@ public class ObjReader {
     private boolean hasTexture;
     private String textureFilename;
     private Textura textura;
-    private Obj objeto;
+    private FloatBuffer vertexBuffer;
+    private int numVertices;
+    private int resourceId;
+
+    private Context context;
 
 
-
-    public ObjReader(Context context, int resourceId) throws IOException{
-        this.context = context;
+    public ObjReader(int resourceId) throws IOException{
         vertexCoord = new ArrayList<>();
         vertexNormal = new ArrayList<>();
         vertexTexture = new ArrayList<>();
         faceList = new ArrayList<>();
         color=new float[4];
         hasTexture=false;
+        this.resourceId =resourceId;
+        context = AppInstance.getInstance().getContext();
         parseObjFile(resourceId);
-        objeto = new Obj(textura,vertexCoord,vertexNormal,vertexTexture,faceList,color);
+        getFloatBuffer();
     }
 
-    public Obj getObjeto() {
-        return objeto;
+    public Obj getObjeto() throws IOException {
+        return new Obj(textura,vertexBuffer, numVertices,color,resourceId);
+    }
+
+
+    public void setObjetoProperties(Obj obj) throws IOException {
+        obj.setProperties(textura,vertexBuffer,numVertices,color);
+    }
+
+    public FloatBuffer getVertexBuffer() {
+        return vertexBuffer;
+    }
+
+    public int getNumVertices() {
+        return numVertices;
+    }
+
+    public float[] getColor() {
+        return color;
+    }
+
+    public Textura getTextura() {
+        return textura;
     }
 
     private void parseObjFile(int resourceId) throws IOException{
@@ -168,6 +195,61 @@ public class ObjReader {
         }else{
             textura=new Textura(R.drawable.texture_default);
         }
+    }
+
+    private void getFloatBuffer(){
+        numVertices=0;
+        numVertices = faceList.size()/3;//3Elementos por cara
+        /*
+        Por cada cara 3 vertices:
+            Cada vertice:
+                3Coordenadas 0 1 2
+                3Normales    3 4 5
+                2Textura     6 7
+                Total:8floats
+        3*8floats=24floats por cara.
+         */
+        float[] fVertexData = new float[8*numVertices];
+
+        //Recorremos las caras y vamos completando el buffer
+        for (int i = 0,j=0; i < faceList.size(); i+=3,j++) {
+            //hay que restar -1 a los indices para que empiecen en 0
+            int iVerticeCoord= faceList.get(i)-1;
+            int iVerticeTex= faceList.get(i+1);
+            int iVerticeNorm= faceList.get(i+2);
+            if(iVerticeTex!=Integer.MIN_VALUE) iVerticeTex--;
+            if(iVerticeNorm!=Integer.MIN_VALUE) iVerticeNorm--;
+            //añadimos vertices coord
+            fVertexData[j*8]=vertexCoord.get(iVerticeCoord*3);
+            fVertexData[j*8+1]=vertexCoord.get(iVerticeCoord*3+1);
+            fVertexData[j*8+2]=vertexCoord.get(iVerticeCoord*3+2);
+            //añadimos verticesNormales
+            if(iVerticeNorm!=Integer.MIN_VALUE){
+                fVertexData[j*8+3]=vertexNormal.get(iVerticeNorm*3);
+                fVertexData[j*8+4]=vertexNormal.get(iVerticeNorm*3+1);
+                fVertexData[j*8+5]=vertexNormal.get(iVerticeNorm*3+2);
+            }else{
+                fVertexData[j*8+3]=0.0f;
+                fVertexData[j*8+4]=1.0f;
+                fVertexData[j*8+5]=0.0f;
+                Log.d("OBJ","Error cargando obj, no hay normal definida");
+            }
+
+            if(iVerticeTex!=Integer.MIN_VALUE){
+                fVertexData[j*8+6]=vertexTexture.get(iVerticeTex*2);
+                fVertexData[j*8+7]=1.0f-vertexTexture.get(iVerticeTex*2+1);
+            }else{
+                fVertexData[j*8+6]=0.0f;
+                fVertexData[j*8+7]=0.0f;
+            }
+        }
+
+        //Creamos buffer de vertices
+        ByteBuffer bb = ByteBuffer.allocateDirect(fVertexData.length * 4);//4bytes*float
+        bb.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
+        vertexBuffer = bb.asFloatBuffer();//creamos buffer float
+        vertexBuffer.put(fVertexData);
+        vertexBuffer.position(0);//reseteamos posicion
     }
 
     private void processMaterialLib(String line) throws IOException {

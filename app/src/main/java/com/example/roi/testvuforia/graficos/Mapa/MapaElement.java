@@ -1,12 +1,7 @@
 package com.example.roi.testvuforia.graficos.Mapa;
 
-import android.content.Context;
-
-import com.example.roi.testvuforia.AppInstance;
-import com.example.roi.testvuforia.R;
-import com.example.roi.testvuforia.graficos.ObjLoader.ObjReader;
 import com.example.roi.testvuforia.graficos.Shader;
-import com.example.roi.testvuforia.graficos.figuras.Obj;
+import com.example.roi.testvuforia.graficos.figuras.Figura;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,7 +12,7 @@ import java.io.Serializable;
 
 public class MapaElement implements Serializable{
     String name;
-    transient Obj obj;
+    Figura figura;
     public boolean visible=true;
     public float[] scale={1.0f,1.0f,1.0f};
     public float[] pos= {0.0f,0.0f,0.0f};
@@ -29,34 +24,18 @@ public class MapaElement implements Serializable{
     /**
      * Constructor
      * @param name Nombre del elemento del mapa
-     * @param objResourceId Resouce id del obj que contiene el elemento a dibujar
+     * @param figura Figura a dibujar
      */
-    public MapaElement(String name, int objResourceId) {
+    public MapaElement(String name, Figura figura) {
         this.name = name;
-        this.objResourceId = objResourceId;
-        try {
-            cargarObj();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.figura = figura;
     }
 
-    private void cargarObj() throws IOException {
-        obj = new ObjReader(AppInstance.getInstance().getContext(),objResourceId).getObjeto();
-    }
 
-    void dibujar(Shader shader){
+    void dibujar(Shader shader, float[] modelViewMatrix){
         if(visible){
-            try {
-                if(obj==null){
-                    cargarObj();
-                }
-                obj.dibujar(shader);
-            }catch (IOException e){
-                e.printStackTrace();
-            }catch (NullPointerException e){
-                e.printStackTrace();
-            }
+            if(!figura.isLoaded()) figura.loadFigura();
+            figura.dibujar(shader,modelViewMatrix);
         }
     }
 }

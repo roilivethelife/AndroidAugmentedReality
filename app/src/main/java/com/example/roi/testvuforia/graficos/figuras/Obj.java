@@ -5,7 +5,10 @@ import android.util.Log;
 
 import com.example.roi.testvuforia.graficos.Shader;
 import com.example.roi.testvuforia.graficos.Textura;
+import com.example.roi.testvuforia.graficos.figuras.ObjLoader.ObjReader;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -15,85 +18,76 @@ import java.util.ArrayList;
  * Created by roi on 20/11/16.
  */
 
-public class Obj extends Figura{
+public class Obj extends Figura implements Serializable{
 
-    private  FloatBuffer vertexBuffer;
-    private int numVertices;
-    private float[] color;
-    private Textura textura;
+    //CABECERA: contiene informacion necesaria para cargar el objeto
+    private int resourceID;
 
-    private int modoDibujado = GLES20.GL_TRIANGLES;
 
+    //Propiedades obj
+    protected transient FloatBuffer vertexBuffer;
+    protected transient int numVertices;
+    private transient float[] color;
+    protected transient Textura textura;
+
+
+    protected int modoDibujado = GLES20.GL_TRIANGLES;
+
+
+
+    public Obj(int resourceID){
+        super(FigureType.OBJ);
+        this.resourceID =resourceID;
+        try {
+            ObjReader objReader = new ObjReader(resourceID);
+            vertexBuffer = objReader.getVertexBuffer();
+            numVertices = objReader.getNumVertices();
+            color = objReader.getColor();
+            textura = objReader.getTextura();
+            isLoaded = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     /**
      * Sets up the drawing object data for use in an OpenGL ES context.
      */
-    public Obj(Textura textura, ArrayList<Float> aVertexCoords, ArrayList<Float> aVertexNormal, ArrayList<Float> aVertexTexture, ArrayList<Integer> aFaces, float[] color) {
+    public Obj(Textura textura, FloatBuffer vertexBuffer, int numVertices, float[] color, int resourceID ) {
+        super(FigureType.OBJ);
         this.textura = textura;
-        numVertices=0;
-        numVertices = aFaces.size()/3;//3Elementos por cara
-        /*
-        Por cada cara 3 vertices:
-            Cada vertice:
-                3Coordenadas 0 1 2
-                3Normales    3 4 5
-                2Textura     6 7
-                Total:8floats
-        3*8floats=24floats por cara.
-         */
-        float[] fVertexData = new float[8*numVertices];
+        this.vertexBuffer = vertexBuffer;
+        this.numVertices= numVertices;
+        this.color=color;
 
-        //Recorremos las caras y vamos completando el buffer
-        for (int i = 0,j=0; i < aFaces.size(); i+=3,j++) {
-            //hay que restar -1 a los indices para que empiecen en 0
-            int iVerticeCoord= aFaces.get(i)-1;
-            int iVerticeTex= aFaces.get(i+1);
-            int iVerticeNorm= aFaces.get(i+2);
-            if(iVerticeTex!=Integer.MIN_VALUE) iVerticeTex--;
-            if(iVerticeNorm!=Integer.MIN_VALUE) iVerticeNorm--;
-            //añadimos vertices coord
-            fVertexData[j*8]=aVertexCoords.get(iVerticeCoord*3);
-            fVertexData[j*8+1]=aVertexCoords.get(iVerticeCoord*3+1);
-            fVertexData[j*8+2]=aVertexCoords.get(iVerticeCoord*3+2);
-            //añadimos verticesNormales
-            if(iVerticeNorm!=Integer.MIN_VALUE){
-                fVertexData[j*8+3]=aVertexNormal.get(iVerticeNorm*3);
-                fVertexData[j*8+4]=aVertexNormal.get(iVerticeNorm*3+1);
-                fVertexData[j*8+5]=aVertexNormal.get(iVerticeNorm*3+2);
-            }else{
-                fVertexData[j*8+3]=0.0f;
-                fVertexData[j*8+4]=1.0f;
-                fVertexData[j*8+5]=0.0f;
-                Log.d("OBJ","Error cargando obj, no hay normal definida");
-            }
+        this.resourceID = resourceID;
 
-            if(iVerticeTex!=Integer.MIN_VALUE){
-                fVertexData[j*8+6]=aVertexTexture.get(iVerticeTex*2);
-                fVertexData[j*8+7]=1.0f-aVertexTexture.get(iVerticeTex*2+1);
-            }else{
-                fVertexData[j*8+6]=0.0f;
-                fVertexData[j*8+7]=0.0f;
-            }
-        }
+        isLoaded = true;
+    }
 
-        //Creamos buffer de vertices
-        ByteBuffer bb = ByteBuffer.allocateDirect(fVertexData.length * 4);//4bytes*float
-        bb.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
-        vertexBuffer = bb.asFloatBuffer();//creamos buffer float
-        vertexBuffer.put(fVertexData);
-        vertexBuffer.position(0);//reseteamos posicion
-
+    public void setProperties(Textura textura, FloatBuffer vertexBuffer, int numVertices, float[] color){
+        this.textura = textura;
+        this.vertexBuffer = vertexBuffer;
+        this.numVertices= numVertices;
         this.color=color;
     }
 
-    //Projection * View * Model
-
+    @Override
+    public void loadFigura() {
+        try {
+            new ObjReader(resourceID).setObjetoProperties(this);
+            isLoaded = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /***
      * Funcion dibujar
      */
     @Override
-    public void dibujar(Shader shader) {
+    public void dibujar(Shader shader,float[] modelViewMatrix) {
         //Configuramos vertices
         vertexBuffer.position(0);//posicion inicial del primer vertice
         GLES20.glEnableVertexAttribArray(shader.getmCoordHandle());
@@ -113,6 +107,10 @@ public class Obj extends Figura{
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textura.getTextureHandle());
         GLES20.glUniform1i(shader.getmTexUniformHandle(), 0);
+
+        //Configuramos modelView
+        GLES20.glUniformMatrix4fv(shader.getmModelMatrixHandle(),1,false,modelViewMatrix,0);
+
         // Draw the triangle
         GLES20.glDrawArrays(modoDibujado,0,numVertices);
 

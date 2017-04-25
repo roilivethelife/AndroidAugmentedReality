@@ -1,17 +1,12 @@
 package com.example.roi.testvuforia.graficos.Mapa;
 
 import android.content.Context;
-import android.opengl.GLES20;
 import android.opengl.Matrix;
 
 import com.example.roi.testvuforia.R;
-import com.example.roi.testvuforia.graficos.AABB;
-import com.example.roi.testvuforia.graficos.ObjLoader.ObjReader;
 import com.example.roi.testvuforia.graficos.Shader;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.example.roi.testvuforia.graficos.figuras.Obj;
+import com.example.roi.testvuforia.graficos.figuras.SueloRadiante;
 
 /**
  * Created by roi on 19/12/16.
@@ -32,13 +27,19 @@ public class MapaControler {
         map.setDescripcion("Mapa por defecto para hacer pruebas");
         MapaElement cuboCentro= null;
         MapaElement habitacionElement = null;
-        cuboCentro = new MapaElement("Centro", R.raw.cubo);
-        habitacionElement = new MapaElement("Wireframe",R.raw.pared);
+        MapaElement sueloRadiante = null;
+        cuboCentro = new MapaElement("Centro",new Obj(R.raw.cubo));
+        cuboCentro.pos[0]=10;
+        cuboCentro.pos[1]=10;
+        cuboCentro.pos[2]=5;
+        habitacionElement = new MapaElement("Wireframe",new Obj(R.raw.pared));
         habitacionElement.scale[0]=200;
         habitacionElement.scale[1]=200;
         habitacionElement.scale[2]=200;
+        sueloRadiante = new MapaElement("Suelo",new SueloRadiante(200,200));
+        map.mapaElements.add(sueloRadiante);
         map.mapaElements.add(cuboCentro);
-        map.mapaElements.add(habitacionElement);
+        //map.mapaElements.add(habitacionElement);
         return map;
     }
 
@@ -51,8 +52,7 @@ public class MapaControler {
             float[] tempModelViewMatrix = modelViewMatrix.clone();
             Matrix.translateM(tempModelViewMatrix,0, mapaElement.pos[0], mapaElement.pos[1], mapaElement.pos[2]);
             Matrix.scaleM(tempModelViewMatrix,0, mapaElement.scale[0], mapaElement.scale[1], mapaElement.scale[2]);
-            GLES20.glUniformMatrix4fv(shader.getmModelMatrixHandle(),1,false,tempModelViewMatrix,0);
-            mapaElement.dibujar(shader);
+            mapaElement.dibujar(shader,tempModelViewMatrix);
         }
     }
 }

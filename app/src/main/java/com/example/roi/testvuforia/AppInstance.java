@@ -50,6 +50,9 @@ public class AppInstance {
     }
 
     public void guardarObjetos(){
+        //TODO: descomentar funciones
+        /*
+
         try
         {
             //Guardar mapas
@@ -68,11 +71,12 @@ public class AppInstance {
             Log.e("AppInstance", "guardarObjetos(): Error al guardar el fichero "+
                     FILE_MAPAS+"en memoria interna");
             ex.printStackTrace();
-        }
+        }*/
     }
 
     public void leerObjetos(){
-        try
+        //TODO: descomentar funciones
+        /*try
         {
             mapas = new ArrayList<>();
             //Leer mapas
@@ -90,12 +94,13 @@ public class AppInstance {
                     mapas.add(map);
                 }
                 obj = ois.readObject();//leer siguiente objeto
+                ois.close();
             }
             if(mapas.size()==0){
                 mapas.add(MapaControler.createLoadDefaultMap());
             }
             Toast.makeText(context,"Mapas leidos: num="+mapas.size(),Toast.LENGTH_SHORT).show();
-            ois.close();
+
         }
         catch (EOFException ex)
         {
@@ -108,7 +113,9 @@ public class AppInstance {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
+        mapas = new ArrayList<>();
+        mapas.add(MapaControler.createLoadDefaultMap());
     }
 
     public ArrayList<Mapa> getMapas() {

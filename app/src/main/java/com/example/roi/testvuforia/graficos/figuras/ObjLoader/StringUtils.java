@@ -1,4 +1,4 @@
-package com.example.roi.testvuforia.graficos.ObjLoader;
+package com.example.roi.testvuforia.graficos.figuras.ObjLoader;
 
 import java.util.*;
 import static java.util.logging.Level.SEVERE;
