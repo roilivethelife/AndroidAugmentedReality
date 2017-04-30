@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 public abstract class Figura implements Serializable{
     public enum FigureType {
-        OBJ, SUELO_RADIANTE
+        OBJ, SUELO_RADIANTE, VENTILADOR
     }
 
 

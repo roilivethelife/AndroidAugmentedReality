@@ -89,6 +89,7 @@ public class LocationControler implements SensorEventListener{
      * @return
      */
     public float[] updateLocation(State state){
+        StringBuilder strBuild = new StringBuilder();
         int resultType = UNKNOWN;
 
         //Obtener estado empleando el primer trackableResult
@@ -98,9 +99,10 @@ public class LocationControler implements SensorEventListener{
                     .getData();
             resultType = result.getStatus();
         }
+        float[] posCamara;
+
         switch (resultType) {
             case TRACKED://Imagen con buena precision
-
                 //Guardar giroCalib y posCalib
                 //Hace falta invertir matriz vuforia asi que la guardamos y ya invertimos mas tarde
                 //de ser necesario
@@ -125,39 +127,50 @@ public class LocationControler implements SensorEventListener{
                 }
                 //Return matrixVuforia
                 matrix=vuforiaMatrix;
+                strBuild.append("Tracked\n");
+                posCamara = invertTransformationMatrix(vuforiaMatrix);
+                appendCamPos(strBuild,posCamara[12],posCamara[13],posCamara[14]);
                 break;
 
             case EXTENDED_TRACKED://imagen con precision media
-                if(firstTracked) {
-                    //obtener posCamara
-                    float[] posCamara = invertTransformationMatrix(vuforiaMatrix);
-                    matrix = giroQuaternion2VuforiaGL(-posCamara[12],-posCamara[13],-posCamara[14]);
-                    break;
-                } else {
-                    matrix = ArRender.identityMatrix;
-                }
+                //obtener posCamara
+                posCamara = invertTransformationMatrix(vuforiaMatrix);
+                matrix = giroQuaternion2VuforiaGL(-posCamara[12],-posCamara[13],-posCamara[14]);
+                strBuild.append("ExtendTracking\n");
+                appendCamPos(strBuild,posCamara[12],posCamara[13],posCamara[14]);
                 break;
             case UNKNOWN:
             default:
                 //utilizamos ultima posicion conocida y giro
                 if(firstTracked) {
                     //obtener posCamara
-                    float[]posCamara = invertTransformationMatrix(matrix);
+                    posCamara = invertTransformationMatrix(matrix);
                     matrix = giroQuaternion2VuforiaGL(-posCamara[12],-posCamara[13],-posCamara[14]);
-                    break;
+                    strBuild.append("OnlyGyro\n");
+                    appendCamPos(strBuild,posCamara[12],posCamara[13],posCamara[14]);
                 } else {
+                    strBuild.append("NOT_TRACKED_YET\n");
                     matrix = ArRender.identityMatrix;
                 }
+                break;
         }
-        StringBuilder strBuild = new StringBuilder();
-        for (int i = 0,k=0; i < 4; i++) {
+
+        /*for (int i = 0,k=0; i < 4; i++) {
             for (int j = 0; j < 4; j++,k++) {
                 strBuild.append(String.format("%.1f", matrix[k])).append(' ');
             }
             strBuild.append('\n');
-        }
+        }*/
         arActivity.setTextViewText(strBuild.toString());
         return matrix;
+    }
+
+
+
+    private void appendCamPos(StringBuilder strBuild, float x, float y, float z){
+        strBuild.append("PosCam: X=").append(String.format("%.1f", x)).
+                append(" Y=").append(String.format("%.1f", y)).
+                append(" Z=").append(String.format("%.1f", z));
     }
 
     /**

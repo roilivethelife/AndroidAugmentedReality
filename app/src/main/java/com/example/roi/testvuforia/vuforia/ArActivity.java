@@ -75,7 +75,8 @@ public class ArActivity extends Activity implements View.OnClickListener{
         btnSetObj.setOnClickListener(this);
         btnVolverRight = (Button) findViewById(R.id.button_ar_back);
         btnVolverRight.setOnClickListener(this);
-        btnExtendedTracking.setOnClickListener(this);
+        btnExtendedTracking.setEnabled(false);
+        //btnExtendedTracking.setOnClickListener(this);
         textViewTop = (TextView) findViewById(R.id.text_view_top_ar);
 
         //Dejamos pantalla encendida
@@ -95,13 +96,13 @@ public class ArActivity extends Activity implements View.OnClickListener{
 
 
         //Iniciar tracker
-        extendedTrackingActive=false;
+        extendedTrackingActive=true;
         TrackerManager tManager = TrackerManager.getInstance();
         objectTracker = (ObjectTracker) tManager.initTracker(ObjectTracker.getClassType());
 
         //cargarNuevoMapa datos del tracker: leer archivo que contiene las imágenes a rastrear
         currentDataSet = objectTracker.createDataSet();
-        currentDataSet.load("Prueba.xml", STORAGE_TYPE.STORAGE_APPRESOURCE);
+        currentDataSet.load("Marker1.xml", STORAGE_TYPE.STORAGE_APPRESOURCE);
         objectTracker.activateDataSet(currentDataSet);
         int numTrackables = currentDataSet.getNumTrackables();
         for (int i = 0; i < numTrackables; i++) {
@@ -200,11 +201,11 @@ public class ArActivity extends Activity implements View.OnClickListener{
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.toggleButtonExtTracking:
-                if(btnExtendedTracking.isChecked()){
+                /*if(btnExtendedTracking.isChecked()){
                     cambiarExtendedTracking(true);
                 }else{
                     cambiarExtendedTracking(false);
-                }
+                }*/
                 // do stuff
                 break;
             case R.id.button_ar_back:
@@ -216,7 +217,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
         }
     }
 
-
+/*
     private void cambiarExtendedTracking(boolean encender){
         extendedTrackingActive = encender;
         for (int tIdx = 0; tIdx < currentDataSet.getNumTrackables(); tIdx++) {
@@ -228,6 +229,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
             }
         }
     }
+    */
 
 
     private void createHandler(){

@@ -1,5 +1,7 @@
 package com.example.roi.testvuforia.graficos.Mapa;
 
+import android.util.Log;
+
 import com.example.roi.testvuforia.graficos.AABB;
 import com.example.roi.testvuforia.graficos.Shader;
 
@@ -17,23 +19,16 @@ public class Mapa implements Serializable {
     public ArrayList<MapaElement> mapaElements;//Elementos del mapa
 
     //Tamaño habitacion en eje x,y,z
-    private float tamX;
-    private float tamY;
-    private float tamZ;
+    float[] tam;
+    float[] markerPos;
 
-    public Mapa(String nombre,float tamX, float tamY, float tamZ)
+
+    public Mapa(String nombre,float[] tam, float[] markerPos)
     {
         this.nombre=nombre;
         mapaElements = new ArrayList<>();
-        if(tamX>0){
-            this.tamX=tamX;
-        }else this.tamX=0;
-        if(tamY>0){
-            this.tamY=tamY;
-        }else this.tamY=0;
-        if(tamZ>0){
-            this.tamZ=tamZ;
-        }else this.tamZ=0;
+        this.tam = tam;
+        this.markerPos = markerPos;
         descripcion = "";
     }
 
@@ -49,35 +44,24 @@ public class Mapa implements Serializable {
         return nombre;
     }
 
-    public float getTamX() {
-        return tamX;
+    public void setTam(float[] tam) {
+        if(tam.length==3) {
+            this.tam = tam;
+        }else Log.e("Mapa","Set Tam invalid input lenght, != 3");
     }
 
-    public float getTamY() {
-        return tamY;
+    public void setMarkerPos(float[] marketPos) {
+        if(marketPos.length==3) {
+            this.markerPos = marketPos;
+        }else Log.e("Mapa","Set marker por invalid input lenght, != 3");
     }
 
-    public float getTamZ() {
-        return tamZ;
-    }
-    public void setTam(float tamX, float tamY, float tamZ){
-        setTamX(tamX);
-        setTamY(tamY);
-        setTamZ(tamZ);
-    }
-    public void setTamX(float tamX) {
-        if(tamX>0)
-            this.tamX = tamX;
+    public float[] getMarkerPos() {
+        return markerPos;
     }
 
-    public void setTamY(float tamY) {
-        if(tamY>0)
-            this.tamY = tamY;
-    }
-
-    public void setTamZ(float tamZ) {
-        if(tamZ>0)
-            this.tamZ = tamZ;
+    public float[] getTam() {
+        return tam;
     }
 }
 
