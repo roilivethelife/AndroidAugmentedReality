@@ -10,20 +10,23 @@ import java.io.Serializable;
 
 public abstract class Figura implements Serializable{
     public enum FigureType {
-        OBJ, SUELO_RADIANTE, VENTILADOR
+        OBJ, SUELO_RADIANTE, VENTILADOR, TEXT
     }
 
-
     private FigureType type;
-    protected transient boolean isLoaded=false;
 
+    protected transient boolean isLoaded = false;
+
+    public boolean isLoaded() {
+        return isLoaded;
+    }
 
     public Figura(FigureType type){
         this.type = type;
     }
 
-    public boolean isLoaded() {
-        return isLoaded;
+    public FigureType getType() {
+        return type;
     }
 
     public abstract void loadFigura();

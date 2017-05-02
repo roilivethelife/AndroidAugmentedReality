@@ -75,7 +75,9 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
         videoBackgroundTex = new GLTextureUnit();
 
         this.shader= new Shader(context);
-        MapaControler.createLoadDefaultMap();
+        //TODO: AUTOLOADMAP: MapaActual from ARActivity. Cargar aqui objetos opengl
+        mapaControler.setMapActual(MapaControler.createLoadDefaultMap());
+        mapaControler.getMapActual().loadOpenGLElements();
     }
 
     @Override
@@ -226,6 +228,11 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
             0.0f, 1.0f, 0.0f, 0.0f,
             0.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f};
+    public static float[] nullMatrix = {
+            0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 0.0f};
     private static final float[] whiteColor = {1.0f, 1.0f, 1.0f, 1.0f};
 
     private void renderVideoBackground() {

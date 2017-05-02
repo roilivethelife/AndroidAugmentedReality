@@ -21,6 +21,7 @@ public class MapaElement implements Serializable{
     private int objResourceId;
 
 
+
     /**
      * Constructor
      * @param name Nombre del elemento del mapa

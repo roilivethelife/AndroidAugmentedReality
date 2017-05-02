@@ -7,7 +7,6 @@ import android.util.Log;
 import com.example.roi.testvuforia.AppInstance;
 import com.example.roi.testvuforia.R;
 import com.example.roi.testvuforia.graficos.Textura;
-import com.example.roi.testvuforia.graficos.figuras.Obj;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -17,7 +16,9 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ObjReader {
     // Tokens for parsing.
@@ -71,7 +72,8 @@ public class ObjReader {
     private boolean hasTexture;
     private String textureFilename;
     private Textura textura;
-    private FloatBuffer vertexBuffer;
+    private FloatBuffer vbo;
+    private ShortBuffer ibo;
     private int numVertices;
     private int resourceId;
 
@@ -88,20 +90,14 @@ public class ObjReader {
         this.resourceId =resourceId;
         context = AppInstance.getInstance().getContext();
         parseObjFile(resourceId);
-        getFloatBuffer();
-    }
-
-    public Obj getObjeto() throws IOException {
-        return new Obj(textura,vertexBuffer, numVertices,color,resourceId);
-    }
-
-
-    public void setObjetoProperties(Obj obj) throws IOException {
-        obj.setProperties(textura,vertexBuffer,numVertices,color);
+        getVboIbo();
     }
 
     public FloatBuffer getVertexBuffer() {
-        return vertexBuffer;
+        return vbo;
+    }
+    public ShortBuffer getIndexBuffer() {
+        return ibo;
     }
 
     public int getNumVertices() {
@@ -197,9 +193,12 @@ public class ObjReader {
         }
     }
 
-    private void getFloatBuffer(){
-        numVertices=0;
-        numVertices = faceList.size()/3;//3Elementos por cara
+    private void getVboIbo(){
+        //Cada cara esta formada por 9 ints
+        //Por lo tanto faceList.size/9 = numero de caras
+        //osea que facelist/3 = numVertices
+
+
         /*
         Por cada cara 3 vertices:
             Cada vertice:
@@ -209,47 +208,91 @@ public class ObjReader {
                 Total:8floats
         3*8floats=24floats por cara.
          */
-        float[] fVertexData = new float[8*numVertices];
 
+        short[] indexBuffer = new short[faceList.size()/3];
+        ArrayList<VerticePointer> verticePointers = new ArrayList<>();
+        HashMap<VerticePointer,Vertice> vertices = new HashMap<>(faceList.size()/4);
+
+        int vertexCount=0;
         //Recorremos las caras y vamos completando el buffer
         for (int i = 0,j=0; i < faceList.size(); i+=3,j++) {
-            //hay que restar -1 a los indices para que empiecen en 0
-            int iVerticeCoord= faceList.get(i)-1;
-            int iVerticeTex= faceList.get(i+1);
-            int iVerticeNorm= faceList.get(i+2);
-            if(iVerticeTex!=Integer.MIN_VALUE) iVerticeTex--;
-            if(iVerticeNorm!=Integer.MIN_VALUE) iVerticeNorm--;
-            //añadimos vertices coord
-            fVertexData[j*8]=vertexCoord.get(iVerticeCoord*3);
-            fVertexData[j*8+1]=vertexCoord.get(iVerticeCoord*3+1);
-            fVertexData[j*8+2]=vertexCoord.get(iVerticeCoord*3+2);
-            //añadimos verticesNormales
-            if(iVerticeNorm!=Integer.MIN_VALUE){
-                fVertexData[j*8+3]=vertexNormal.get(iVerticeNorm*3);
-                fVertexData[j*8+4]=vertexNormal.get(iVerticeNorm*3+1);
-                fVertexData[j*8+5]=vertexNormal.get(iVerticeNorm*3+2);
-            }else{
-                fVertexData[j*8+3]=0.0f;
-                fVertexData[j*8+4]=1.0f;
-                fVertexData[j*8+5]=0.0f;
-                Log.d("OBJ","Error cargando obj, no hay normal definida");
-            }
 
-            if(iVerticeTex!=Integer.MIN_VALUE){
-                fVertexData[j*8+6]=vertexTexture.get(iVerticeTex*2);
-                fVertexData[j*8+7]=1.0f-vertexTexture.get(iVerticeTex*2+1);
-            }else{
-                fVertexData[j*8+6]=0.0f;
-                fVertexData[j*8+7]=0.0f;
+            VerticePointer verticePointer= new VerticePointer();
+
+            //hay que restar -1 a los indices para que empiecen en 0
+            verticePointer.coord_i= faceList.get(i)-1;
+            verticePointer.text_i= faceList.get(i+1);
+            verticePointer.norm_i= faceList.get(i+2);
+            if(verticePointer.text_i!=Integer.MIN_VALUE) verticePointer.text_i--;
+            if(verticePointer.norm_i!=Integer.MIN_VALUE) verticePointer.norm_i--;
+
+            //comprobar si el vertice ya existe:
+            if(vertices.containsKey(verticePointer)){
+                Vertice v = vertices.get(verticePointer);
+                indexBuffer[j]=(short)v.i;
+            }else {
+                Vertice vertice = new Vertice(vertexCount);
+                //añadimos vertices coord
+                vertice.coord[0] = vertexCoord.get(verticePointer.coord_i * 3);
+                vertice.coord[1] = vertexCoord.get(verticePointer.coord_i * 3 + 1);
+                vertice.coord[2] = vertexCoord.get(verticePointer.coord_i * 3 + 2);
+                //añadimos verticesNormales
+                if (verticePointer.norm_i != Integer.MIN_VALUE) {
+                    vertice.norm[0] = vertexNormal.get(verticePointer.norm_i * 3);
+                    vertice.norm[1] = vertexNormal.get(verticePointer.norm_i * 3 + 1);
+                    vertice.norm[2] = vertexNormal.get(verticePointer.norm_i * 3 + 2);
+                } else {
+                    vertice.norm[0] = 0.0f;
+                    vertice.norm[1] = 1.0f;
+                    vertice.norm[2] = 0.0f;
+                    Log.d("OBJ", "Error cargando obj, no hay normal definida");
+                }
+
+                if (verticePointer.text_i != Integer.MIN_VALUE) {
+                    vertice.tex[0] = vertexTexture.get(verticePointer.text_i * 2);
+                    vertice.tex[1] = 1.0f - vertexTexture.get(verticePointer.text_i * 2 + 1);
+                } else {
+                    vertice.tex[0] = 0.0f;
+                    vertice.tex[1] = 0.0f;
+                }
+                vertices.put(verticePointer,vertice);
+                verticePointers.add(verticePointer);
+                indexBuffer[j]=(short)vertexCount;
+                vertexCount++;
             }
         }
+        numVertices =vertexCount;
 
-        //Creamos buffer de vertices
-        ByteBuffer bb = ByteBuffer.allocateDirect(fVertexData.length * 4);//4bytes*float
+        //Creamos buffer de indices
+        ByteBuffer bb = ByteBuffer.allocateDirect(indexBuffer.length * 2);//2bytes*short
         bb.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
-        vertexBuffer = bb.asFloatBuffer();//creamos buffer float
-        vertexBuffer.put(fVertexData);
-        vertexBuffer.position(0);//reseteamos posicion
+        ibo = bb.asShortBuffer();//creamos buffer float
+        ibo.put(indexBuffer);
+        ibo.position(0);//reseteamos posicion
+
+        //Creamos buffer de objetos
+        float[] vboFloat = new float[verticePointers.size()*8];
+        int p =0;
+        for (VerticePointer vp :verticePointers) {
+            Vertice v = vertices.get(vp);
+            vboFloat[p++]=v.coord[0];
+            vboFloat[p++]=v.coord[1];
+            vboFloat[p++]=v.coord[2];
+            vboFloat[p++]=v.norm[0];
+            vboFloat[p++]=v.norm[1];
+            vboFloat[p++]=v.norm[2];
+            vboFloat[p++]=v.tex[0];
+            vboFloat[p++]=v.tex[1];
+        }
+        bb = ByteBuffer.allocateDirect(vboFloat.length*4);
+        bb.order(ByteOrder.nativeOrder());
+        vbo = bb.asFloatBuffer();
+        vbo.put(vboFloat);
+        vbo.position(0);
+        vertices.clear();
+        verticePointers.clear();
+        indexBuffer = null;
+        vboFloat = null;
     }
 
     private void processMaterialLib(String line) throws IOException {
@@ -398,6 +441,45 @@ public class ObjReader {
         return tmp;
     }
 
+
+    private class VerticePointer{
+        int coord_i;
+        int norm_i;
+        int text_i;
+
+        @Override
+        public int hashCode() {
+            int hash = 17;
+            hash = hash * 31 + coord_i;
+            hash = hash * 31 + norm_i;
+            hash = hash * 31 + text_i;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == null) return false;
+            if (other == this) return true;
+            if (!(other instanceof VerticePointer))return false;
+            VerticePointer otherClass = (VerticePointer) other;
+            return (otherClass.coord_i==coord_i &&
+                    otherClass.norm_i==norm_i &&
+                    otherClass.text_i==text_i );
+        }
+    }
+
+    private class Vertice{
+        int i;
+        float[] coord;
+        float[] norm;
+        float[] tex;
+        public Vertice (int i){
+            coord = new float[3];
+            norm = new float[3];
+            tex = new float[2];
+            this.i = i;
+        }
+    }
 
 
 }

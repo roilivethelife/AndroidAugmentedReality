@@ -150,7 +150,7 @@ public class LocationControler implements SensorEventListener{
                     appendCamPos(strBuild,posCamara[12],posCamara[13],posCamara[14]);
                 } else {
                     strBuild.append("NOT_TRACKED_YET\n");
-                    matrix = ArRender.identityMatrix;
+                    matrix = ArRender.nullMatrix;
                 }
                 break;
         }

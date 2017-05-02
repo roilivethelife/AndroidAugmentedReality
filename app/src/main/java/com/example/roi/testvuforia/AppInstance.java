@@ -114,8 +114,8 @@ public class AppInstance {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }*/
-        mapas = new ArrayList<>();
-        mapas.add(MapaControler.createLoadDefaultMap());
+        //mapas = new ArrayList<>();
+        //mapas.add(MapaControler.createLoadDefaultMap());
     }
 
     public ArrayList<Mapa> getMapas() {

@@ -2,8 +2,6 @@ package com.example.roi.testvuforia.graficos.Mapa;
 
 import android.util.Log;
 
-import com.example.roi.testvuforia.graficos.AABB;
-import com.example.roi.testvuforia.graficos.Shader;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,6 +28,13 @@ public class Mapa implements Serializable {
         this.tam = tam;
         this.markerPos = markerPos;
         descripcion = "";
+    }
+
+    public void loadOpenGLElements(){
+        for (MapaElement mE :mapaElements) {
+            if(!mE.figura.isLoaded())
+                mE.figura.loadFigura();
+        }
     }
 
     public String getDescripcion() {

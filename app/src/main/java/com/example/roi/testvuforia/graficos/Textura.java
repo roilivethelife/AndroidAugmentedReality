@@ -14,37 +14,41 @@ import com.example.roi.testvuforia.AppInstance;
  */
 
 public class Textura {
-    private boolean isTexturaCargada;
     private int resourceId;
-
     private int textureHandle;
 
-
-    private Textura(int textureHandle, int setzero){
-        this.textureHandle = textureHandle;
-        isTexturaCargada = true;
-        resourceId = 0;
-    }
-
-    public Textura(int resourceId){
-        isTexturaCargada = false;
+    private Textura(){
         this.resourceId =resourceId;
         textureHandle = 0;
     }
 
-    private void cargarTextura(){
+    public Textura(int resourceId){
+        this();
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;   // No pre-scaling
+        // Read in the resource
+        Bitmap bitmap = BitmapFactory.decodeResource(AppInstance.getInstance().getContext().getResources(), resourceId, options);
+        cargarTextura(bitmap);
+        bitmap.recycle();
+    }
+
+    /**
+     * Carga una textura para dibujar en openGL empleando el bitmap indicado
+     * @param bitmap
+     */
+    public Textura(Bitmap bitmap){
+        this();
+        cargarTextura(bitmap);
+    }
+
+
+    private void cargarTextura(Bitmap bitmap){
         int[] textureHandleTemp = new int[1];
         Context context = AppInstance.getInstance().getContext();
 
         GLES20.glGenTextures(1, textureHandleTemp, 0);
 
         if (textureHandleTemp[0] != 0){
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inScaled = false;   // No pre-scaling
-
-            // Read in the resource
-            final Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
-
             // Bind to the texture in OpenGL
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandleTemp[0]);
 
@@ -68,15 +72,14 @@ public class Textura {
     }
 
     public int getTextureHandle() {
-        if(!isTexturaCargada) {
-            cargarTextura();
-            isTexturaCargada=true;
-        }
         return textureHandle;
     }
 
-    @Override
-    public Textura clone()  {
-        return new Textura(textureHandle,0);
+    public void deleteTexture(){
+        int[] handles = new int[1];
+        handles[0] = textureHandle;
+        GLES20.glDeleteTextures(1,handles,0);
+        this.textureHandle = 0;
     }
+
 }

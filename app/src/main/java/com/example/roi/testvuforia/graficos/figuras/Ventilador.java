@@ -32,25 +32,16 @@ public class Ventilador extends Figura implements Serializable{
 
     public Ventilador(boolean funcionando) {
         super(FigureType.VENTILADOR);
-        try {
-            fan_on = funcionando;
-            fan = new ObjReader(resourceIDFan).getObjeto();
-            caja = new ObjReader(resourceIDCaja).getObjeto();
-            isLoaded = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        fan_on = funcionando;
     }
 
     @Override
     public void loadFigura() {
-        try {
-            fan = new ObjReader(resourceIDFan).getObjeto();
-            caja = new ObjReader(resourceIDCaja).getObjeto();
-            isLoaded = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        fan = new Obj(resourceIDFan);
+        caja = new Obj(resourceIDCaja);
+        fan.loadFigura();
+        caja.loadFigura();
+        isLoaded = true;
     }
 
     public void setFan_on(boolean fan_on) {

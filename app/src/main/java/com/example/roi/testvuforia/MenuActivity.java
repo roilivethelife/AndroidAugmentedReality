@@ -53,10 +53,14 @@ public class MenuActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if (permisosOk()) {
+                    //TODO: AUTOLOADMAP: Eliminar lineas y descomentar
+                    Intent intent = new Intent(view.getContext(), ArActivity.class);
+                    startActivity(intent);
+                    /*
                     AppInstance.getInstance().leerObjetos();
                     Intent intent = new Intent(view.getContext(), SelectMapActivity.class);
                     intent.putExtra("TITULO","Seleccione el mapa a utilizar:");
-                    startActivityForResult(intent, RESULT_PICK_MAP);
+                    startActivityForResult(intent, RESULT_PICK_MAP);*/
                 } else {
                     Log.d(LOGTAG, "Error boton click: no estan todos los permisos");
                     //TODO: mensaje al usuario
