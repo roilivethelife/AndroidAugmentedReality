@@ -7,7 +7,7 @@ Android Studio 2.2.3
 Vuforia Sdk V6.0.117 (oct2016)
 
 HOW IT WORKS
-First you have to select the room where you are. (TODO: how to add new rooms)
+First you have to select the room where you are.
 Then the camera stars and it try to look the reference marker.
 Once the app track the marker it will know the position of the phone in the room, and it will be
 able to see digital elements over the room, and add your custom elements.
