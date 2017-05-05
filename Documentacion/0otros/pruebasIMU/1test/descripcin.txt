@@ -1,0 +1,7 @@
+movil sobre la mesa 5seg aprox
+coger movil
+caminar 5 baldosas hacia delante
+parar un rato
+caminar 5 baldosas hacia atras
+apoyar movil
+movil sobre la mesa 5seg aprox

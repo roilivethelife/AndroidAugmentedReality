@@ -1,0 +1,12 @@
+# Blender MTL File: 'ventilador_no_acabado.blend'
+# Material Count: 1
+
+newmtl Metal_Aluminum_A
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.186412 0.186412 0.186412
+Ks 0.447059 0.447059 0.447059
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 0

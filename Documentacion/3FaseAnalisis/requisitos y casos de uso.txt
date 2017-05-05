@@ -1,0 +1,39 @@
+RF01- Dibujar entorno AR
+RF02- Dibujar imagen real del entorno
+RF03- Dibujar espacio virtual
+RF04- Ubicar y orientar el dispositivo en el espacio
+RF05- Utilizar espacio 3D
+RF06- Seleccionar elementos virtuales a mostrar
+RF07- Cargar fichero externo con espacio 3D
+RF08- Modificar espacio 3D
+RF09- Eliminar espacio 3D
+RF10- Crear espacio 3D
+RF11- Cargar elementos virtuales dinámicos vía Web Rest
+RF12- Crear elemento virtual estático
+RF13- Eliminar elemento virtual
+RF14- Vincular elemento virtual con espacio 3D
+RF15- Desvincular elemento virtual con espacio 3D
+RI01- Interfaz sencilla y funcional
+RR01- Funcionamiento en tiempo real de forma fluida
+RR02- La aplicación debe de realizar el seguimiento con un mínimo de fiabilidad
+
+Casos de uso
+CU01- Puesta en marcha entorno AR - CU02 CU03 RF01
+CU02- Utilizar espacio 3D - CU04 RF05
+CU03- Seleccionar elementos virtuales a mostrar -CU04 RF06
+CU04- Configurar elementos AR CU05 CU06 CU07
+CU05- Configurar espacios 3D
+CU06- Configurar elementos virtuales
+CU07- Vincular o Desvincular elemento virtual con espacio 3D CU05 CU06 rf14, rf15
+
+CU00- Cargar fichero externo con espacio 3D rf07
+CU00- Modificar espacio 3D rf08
+CU00- Eliminar espacio 3D rf09
+CU00- Crear espacio 3D rf10
+CU00- Cargar elementos virtuales dinámicos vía Web Rest rf11
+CU00- Crear elemento virtual estático rf12
+CU00- Eliminar elemento virtual rf13
+
+
+
+
