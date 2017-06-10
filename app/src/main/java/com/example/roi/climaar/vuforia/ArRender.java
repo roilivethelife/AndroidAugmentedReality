@@ -47,9 +47,18 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
 
     private Context context;
 
+    /**
+     * Renderer de vudoria
+     */
     private Renderer mRenderer;
     private int currentView = VIEW.VIEW_SINGULAR;
+    /**
+     * Atributo rendering vuforia
+     */
     private RenderingPrimitives mRenderingPrimitives;
+    /**
+     * GLTextura de vuforia
+     */
     private GLTextureUnit videoBackgroundTex;
 
 
@@ -86,19 +95,6 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
         Vuforia.onSurfaceChanged(width, height);
     }
 
-    private float[] setupProjectionMatrix(int width, int height, float nearPlane, float farPlane){
-        CameraCalibration camCalib = CameraDevice.getInstance().getCameraCalibration();
-        // The following code reproduces the projectionMatrix above using the camera parameters
-        Vec2F size = camCalib.getSize();
-        Vec2F focalLength = camCalib.getFocalLength();
-        Vec2F principalPoint = camCalib.getPrincipalPoint();
-        float fovRadians = 2 * (float)Math.atan(0.5f * size.getData()[1] / focalLength.getData()[1]);
-        float fovDegrees = fovRadians * 180.0f / M_PI;
-        float[] matrix = new float[16];
-        float aspect= (float)width/height;
-        Matrix.perspectiveM(matrix,0,fovDegrees,aspect,nearPlane,farPlane);
-        return matrix;
-    }
 
     private float[] vuforiaOnDrawFramePre() {
         // We must detect if background reflection is active and adjust the
@@ -173,8 +169,7 @@ public class ArRender implements GLSurfaceView.Renderer, OnTouchInterface {
         GLES20.glUniformMatrix4fv(shader.getmPVMatrixHandle(), 1, false, projectionMatrix, 0);
         float[] modelViewMatrix = locControl.updateLocation(state);
         mapaControler.dibujar(shader,modelViewMatrix);
-        /*GLES20.glUniformMatrix4fv(shader.getmModelMatrixHandle(),1,false,modelViewMatrix,0);
-        cubo.dibujar();*/
+
 
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
         checkGLError("Fin dibujar");

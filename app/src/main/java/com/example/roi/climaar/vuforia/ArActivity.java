@@ -56,8 +56,6 @@ public class ArActivity extends Activity implements View.OnClickListener{
     private boolean extendedTrackingActive;
     private DataSet currentDataSet;
 
-    private int camera;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,6 +124,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
         //Crear instancias de MapaControler, LocationControler
         mapaControler = new MapaControler(this,map);
         locationControler=new LocationControler(this,mapaControler,this);
+
         glView = new MiGLSurfaceView(this);
         arRender = new ArRender(this,locationControler,mapaControler);
         glView.setRenderer(arRender);
@@ -166,7 +165,7 @@ public class ArActivity extends Activity implements View.OnClickListener{
 
         //Iniciar camara y trackers
         //Configurar camara
-        camera = CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_BACK;
+        int camera = CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_BACK;
         CameraDevice.getInstance().init(camera);
         //Configure video background
         Point point = new Point();

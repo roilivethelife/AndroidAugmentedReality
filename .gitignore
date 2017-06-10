@@ -1,4 +1,4 @@
-build
+.gitignorebuild
 javadoc
 gradle
 *.iml
