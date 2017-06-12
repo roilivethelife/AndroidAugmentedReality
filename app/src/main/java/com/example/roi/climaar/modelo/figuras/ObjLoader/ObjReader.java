@@ -1,12 +1,12 @@
-package com.example.roi.climaar.graficos.figuras.ObjLoader;
+package com.example.roi.climaar.modelo.figuras.ObjLoader;
 
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.roi.climaar.AppInstance;
+import com.example.roi.climaar.old.AppInstance;
 import com.example.roi.climaar.R;
-import com.example.roi.climaar.graficos.Textura;
+import com.example.roi.climaar.modelo.figuras.Textura;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -80,7 +80,7 @@ public class ObjReader {
     private Context context;
 
 
-    public ObjReader(int resourceId) throws IOException{
+    public ObjReader(Context context, int resourceId) throws IOException{
         vertexCoord = new ArrayList<>();
         vertexNormal = new ArrayList<>();
         vertexTexture = new ArrayList<>();
@@ -88,7 +88,7 @@ public class ObjReader {
         color=new float[4];
         hasTexture=false;
         this.resourceId =resourceId;
-        context = AppInstance.getInstance().getContext();
+        this.context = context;
         parseObjFile(resourceId);
         getVboIbo();
     }
@@ -187,9 +187,9 @@ public class ObjReader {
         if(hasTexture){
             String textureFilenameWoExtension = textureFilename.substring(0, textureFilename.lastIndexOf('.'));
             int resID= context.getResources().getIdentifier(textureFilenameWoExtension,"drawable",context.getPackageName());
-            textura=new Textura(resID);
+            textura=new Textura(context,resID);
         }else{
-            textura=new Textura(R.drawable.texture_default);
+            textura=new Textura(context,R.drawable.texture_default);
         }
     }
 

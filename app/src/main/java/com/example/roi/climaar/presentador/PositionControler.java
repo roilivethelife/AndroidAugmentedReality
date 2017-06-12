@@ -1,4 +1,4 @@
-package com.example.roi.climaar;
+package com.example.roi.climaar.presentador;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -7,15 +7,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.Matrix;
 
-import com.example.roi.climaar.graficos.Mapa.MapaControler;
-import com.example.roi.climaar.vuforia.ArActivity;
-import com.example.roi.climaar.vuforia.ArRender;
+
+import com.example.roi.climaar.vista.ARRender;
 import com.vuforia.State;
 import com.vuforia.Tool;
 import com.vuforia.TrackableResult;
 
-import static com.vuforia.TrackableResult.STATUS.*;
-import static java.lang.Math.abs;
+import static com.vuforia.TrackableResult.STATUS.EXTENDED_TRACKED;
+import static com.vuforia.TrackableResult.STATUS.TRACKED;
+import static com.vuforia.TrackableResult.STATUS.UNKNOWN;
 
 /**
  * Created by roi on 14/12/16.
@@ -25,14 +25,13 @@ import static java.lang.Math.abs;
  * Además procesará la lectura del giroscopio para ayudar a la orientacion si vuforia pierde el rastreo
  */
 
-public class LocationControler implements SensorEventListener{
+public class PositionControler implements SensorEventListener{
 
     //Variables Listener giroscopio
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private boolean listenerRegistered=false;
 
-    ArActivity arActivity;
 
     private float[] matrix;
     private float[] calibGiroMatrix;//matriz para alinear el giroscopio con el marcador de vudoria
@@ -44,21 +43,20 @@ public class LocationControler implements SensorEventListener{
     private float[] vuforiaMatrix;//Lectura matriz de vuforia
 
 
-    public LocationControler(Context context, MapaControler mapaControler, ArActivity arActivity){
+    public PositionControler(Context context){
         matrix = new float[16];
         quatGiroscopioListener = new float[4];
-        vuforiaMatrix = ArRender.identityMatrix.clone();
+        vuforiaMatrix = ARRender.identityMatrix.clone();
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
-        this.arActivity = arActivity;
-        calibGiroMatrix=ArRender.identityMatrix.clone();
+        calibGiroMatrix=ARRender.identityMatrix.clone();
     }
 
     /**
      * Debe ser llamado cuando necesitamos iniciar el controlador
      */
-    public void startControler(){
+    public void onResume(){
         if(!listenerRegistered) {
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_FASTEST);//Una por segundo
             listenerRegistered=true;
@@ -68,7 +66,7 @@ public class LocationControler implements SensorEventListener{
     /**
      * Debe ser llamado cuando no se vaya a usar el controlador
      */
-    public void stopControler(){
+    public void onPause(){
         if (listenerRegistered) {
             mSensorManager.unregisterListener(this);
             listenerRegistered=false;
@@ -143,7 +141,7 @@ public class LocationControler implements SensorEventListener{
                     appendCamPos(strBuild,posCamara[12],posCamara[13],posCamara[14]);
                 } else {
                     strBuild.append("NOT_TRACKED_YET\n");
-                    matrix = ArRender.nullMatrix;
+                    matrix = ARRender.nullMatrix;
                 }
                 break;
         }
@@ -154,11 +152,12 @@ public class LocationControler implements SensorEventListener{
             }
             strBuild.append('\n');
         }*/
-        arActivity.setTextViewText(strBuild.toString());
         return matrix.clone();
     }
 
-
+    public float[] getMatrix() {
+        return matrix;
+    }
 
     private void appendCamPos(StringBuilder strBuild, float x, float y, float z){
         strBuild.append("PosCam: X=").append(String.format("%.1f", x)).
@@ -171,7 +170,7 @@ public class LocationControler implements SensorEventListener{
      * @param matrix
      * @return
      */
-    public static float[] invertTransformationMatrix(float[] matrix){
+    private static float[] invertTransformationMatrix(float[] matrix){
         if (matrix.length!=16) throw new RuntimeException("Matrix length!=16");
         float[] ret = matrix.clone();
         //1 Trasponer R
@@ -197,10 +196,10 @@ public class LocationControler implements SensorEventListener{
      * @return
      */
     private float[] giroQuaternion2VuforiaGL(float x, float y, float z){
-        float[] matrixTempt = ArRender.identityMatrix.clone();
+        float[] matrixTempt = ARRender.identityMatrix.clone();
         float[] giroMatrixCorrected = new float[16];
         float[] giroMatrix = new float[16];
-        float[] scaleMatrix = ArRender.identityMatrix.clone();
+        float[] scaleMatrix = ARRender.identityMatrix.clone();
         Matrix.scaleM(scaleMatrix,0,-1,-1,-1);
         //utilizamos posicion de vuforia y giro giroscopio
         SensorManager.getRotationMatrixFromVector(giroMatrix,quatGiroscopioListener);

@@ -1,4 +1,4 @@
-package com.example.roi.climaar.graficos.figuras.Texto;
+package com.example.roi.climaar.modelo.figuras.Texto;
 
 /**
  * Created by roi on 30/04/17.

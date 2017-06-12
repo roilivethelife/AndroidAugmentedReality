@@ -12,8 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.roi.climaar.graficos.Mapa.Mapa;
-import com.example.roi.climaar.vuforia.ArActivity;
+import com.example.roi.climaar.modelo.Modelo;
+import com.example.roi.climaar.modelo.mapa.Mapa;
+import com.example.roi.climaar.vista.ARActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,6 @@ public class MenuActivity extends Activity {
 
         //comprueba que permisos están activos y pide al usuario
         comprobarPedirPermisos();
-        AppInstance.getInstance().setContext(this);
 
 
         btnArActivity = (Button) findViewById(R.id.btn_aractivity);
@@ -53,7 +53,9 @@ public class MenuActivity extends Activity {
             public void onClick(View view) {
                 if (permisosOk()) {
                     //TODO: AUTOLOADMAP: Eliminar lineas y descomentar
-                    Intent intent = new Intent(view.getContext(), ArActivity.class);
+                    Intent intent = new Intent(view.getContext(), ARActivity.class);
+                    intent.putExtra("MAPA", Modelo.getInstance().getMapas().get(0));
+                    Log.d(LOGTAG, "StartActivity");
                     startActivity(intent);
                     /*
                     AppInstance.getInstance().leerObjetos();
@@ -66,6 +68,12 @@ public class MenuActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Modelo.getInstance().setContext(this);
     }
 
     @Override
@@ -191,7 +199,7 @@ public class MenuActivity extends Activity {
                     }
                     if(map!=null) {
                         Toast.makeText(this, "Mapa seleciconado:" + map.getNombre(), Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(this, ArActivity.class);
+                        Intent intent = new Intent(this, ARActivity.class);
                         intent.putExtra("MAPA",map);
                         startActivity(intent);
                     }

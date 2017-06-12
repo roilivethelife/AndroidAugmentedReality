@@ -34,7 +34,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.roi.climaar.vuforia.ArActivity" />
+        <activity android:name="com.example.roi.climaar.vista.ARActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape"/>
         <activity android:name="com.example.roi.climaar.SelectMapActivity"></activity>
     </application>
 

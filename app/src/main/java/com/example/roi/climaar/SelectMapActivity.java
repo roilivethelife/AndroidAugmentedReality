@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.roi.climaar.graficos.Mapa.Mapa;
+
+import com.example.roi.climaar.modelo.Modelo;
+import com.example.roi.climaar.modelo.mapa.Mapa;
+import com.example.roi.climaar.old.AppInstance;
 
 import java.util.ArrayList;
 
@@ -84,7 +88,7 @@ public class SelectMapActivity extends Activity implements AdapterView.OnItemCli
 
         ItemAdapter(Context context){
             this.context = context;
-            mapas = AppInstance.getInstance().getMapas();
+            mapas = Modelo.getInstance().getMapas();
         }
 
         @Override

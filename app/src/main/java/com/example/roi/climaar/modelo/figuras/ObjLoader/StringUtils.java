@@ -1,4 +1,4 @@
-package com.example.roi.climaar.graficos.figuras.ObjLoader;
+package com.example.roi.climaar.modelo.figuras.ObjLoader;
 
 import java.util.*;
 import static java.util.logging.Level.SEVERE;

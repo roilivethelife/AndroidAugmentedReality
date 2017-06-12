@@ -1,6 +1,8 @@
-package com.example.roi.climaar.graficos.figuras;
+package com.example.roi.climaar.modelo.figuras;
 
-import com.example.roi.climaar.graficos.Shader;
+import android.content.Context;
+
+import com.example.roi.climaar.vista.Shader;
 
 import java.io.Serializable;
 
@@ -32,7 +34,7 @@ public abstract class Figura implements Serializable{
     }
 
 
-    public abstract void loadFigura();
+    public abstract void loadFigura(Context context);
 
     public abstract void dibujar(Shader shader, float[] modelViewMatrix);
 

@@ -1,9 +1,10 @@
-package com.example.roi.climaar.graficos.figuras;
+package com.example.roi.climaar.modelo.figuras;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import com.example.roi.climaar.graficos.figuras.ObjLoader.ObjReader;
+import com.example.roi.climaar.modelo.figuras.ObjLoader.ObjReader;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -26,9 +27,9 @@ public class Obj extends Ibo implements Serializable{
     }
 
     @Override
-    public void loadFigura() {
+    public void loadFigura(Context context) {
         try {
-            ObjReader objReader = new ObjReader(resourceID);
+            ObjReader objReader = new ObjReader(context,resourceID);
             color = objReader.getColor();
             textura = objReader.getTextura();
             FloatBuffer vertexBuffer = objReader.getVertexBuffer();

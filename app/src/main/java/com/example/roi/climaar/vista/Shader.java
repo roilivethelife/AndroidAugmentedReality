@@ -1,7 +1,8 @@
-package com.example.roi.climaar.graficos;
+package com.example.roi.climaar.vista;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.roi.climaar.R;
@@ -25,12 +26,14 @@ public class Shader {
     private final int mTexCoordinateHandle;
     private final int mTexUniformHandle;
 
+    private static final int VERTEX_SHADER_CODE = R.raw.vertex_shader;
+    private static final int FRAGMENT_SHADER_CODE = R.raw.fragment_shader;
 
 
     public Shader(Context context) {
 
-        String vertexShaderCode = readTextFileFromRawResource(context, R.raw.vertex_shader);
-        String fragmentShaderCode = readTextFileFromRawResource(context,R.raw.fragment_shader);
+        String vertexShaderCode = readTextFileFromRawResource(context, VERTEX_SHADER_CODE);
+        String fragmentShaderCode = readTextFileFromRawResource(context,FRAGMENT_SHADER_CODE);
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
         int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 

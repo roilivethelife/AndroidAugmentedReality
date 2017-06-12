@@ -1,9 +1,8 @@
-package com.example.roi.climaar.graficos.figuras;
+package com.example.roi.climaar.modelo.figuras;
 
 import android.opengl.GLES20;
 
-import com.example.roi.climaar.graficos.Shader;
-import com.example.roi.climaar.graficos.Textura;
+import com.example.roi.climaar.vista.Shader;
 
 import java.nio.FloatBuffer;
 
@@ -37,7 +36,6 @@ public abstract class VboClient extends Figura {
 
     }
 
-    public abstract void loadFigura();
 
     public void dibujar(Shader shader, float[] modelViewMatrix){
         //Configuramos vertices

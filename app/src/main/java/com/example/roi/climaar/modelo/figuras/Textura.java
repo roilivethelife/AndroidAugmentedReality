@@ -1,4 +1,4 @@
-package com.example.roi.climaar.graficos;
+package com.example.roi.climaar.modelo.figuras;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,7 +7,7 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
 
-import com.example.roi.climaar.AppInstance;
+import com.example.roi.climaar.old.AppInstance;
 
 /**
  * Created by roi on 18/11/16.
@@ -22,12 +22,12 @@ public class Textura {
         textureHandle = 0;
     }
 
-    public Textura(int resourceId){
+    public Textura(Context context,int resourceId){
         this();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;   // No pre-scaling
         // Read in the resource
-        Bitmap bitmap = BitmapFactory.decodeResource(AppInstance.getInstance().getContext().getResources(), resourceId, options);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
         cargarTextura(bitmap);
         bitmap.recycle();
     }
@@ -44,7 +44,6 @@ public class Textura {
 
     private void cargarTextura(Bitmap bitmap){
         int[] textureHandleTemp = new int[1];
-        Context context = AppInstance.getInstance().getContext();
 
         GLES20.glGenTextures(1, textureHandleTemp, 0);
 
@@ -61,10 +60,7 @@ public class Textura {
 
             // Recycle the bitmap, since its data has been loaded into OpenGL.
             bitmap.recycle();
-        }
-
-        if (textureHandleTemp[0] == 0)
-        {
+        }else{
             throw new RuntimeException("Error loading texture.");
         }
         textureHandle=textureHandleTemp[0];

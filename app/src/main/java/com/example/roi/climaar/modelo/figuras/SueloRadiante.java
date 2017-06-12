@@ -1,9 +1,10 @@
-package com.example.roi.climaar.graficos.figuras;
+package com.example.roi.climaar.modelo.figuras;
 
+import android.content.Context;
 import android.opengl.Matrix;
 
 import com.example.roi.climaar.R;
-import com.example.roi.climaar.graficos.Shader;
+import com.example.roi.climaar.vista.Shader;
 
 import java.io.Serializable;
 
@@ -43,9 +44,9 @@ public class SueloRadiante extends Figura implements Serializable{
     }
 
     @Override
-    public void loadFigura() {
+    public void loadFigura(Context context) {
         pipe = new Obj(resourceID);
-        pipe.loadFigura();
+        pipe.loadFigura(context);
         isLoaded = true;
     }
 

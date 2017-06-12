@@ -1,15 +1,15 @@
-package com.example.roi.climaar.graficos.Mapa;
+package com.example.roi.climaar.modelo.mapa;
 
-import com.example.roi.climaar.graficos.Shader;
-import com.example.roi.climaar.graficos.figuras.Figura;
+import com.example.roi.climaar.modelo.figuras.Figura;
+import com.example.roi.climaar.vista.Shader;
 
 import java.io.Serializable;
 
 /**
- * Created by roi on 22/12/16.
+ * Created by roi on 10/06/17.
  */
 
-public class MapaElement implements Serializable{
+public class MapElement implements Serializable{
     String name;
     Figura figura;
     public boolean visible=true;
@@ -26,7 +26,7 @@ public class MapaElement implements Serializable{
      * @param name Nombre del elemento del mapa
      * @param figura Figura a dibujar
      */
-    public MapaElement(String name, Figura figura) {
+    public MapElement(String name, Figura figura) {
         this.name = name;
         this.figura = figura;
     }
@@ -34,7 +34,6 @@ public class MapaElement implements Serializable{
 
     void dibujar(Shader shader, float[] modelViewMatrix){
         if(visible){
-            if(!figura.isLoaded()) figura.loadFigura();
             figura.dibujar(shader,modelViewMatrix);
         }
     }

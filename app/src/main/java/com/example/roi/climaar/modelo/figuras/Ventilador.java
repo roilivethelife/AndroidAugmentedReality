@@ -1,9 +1,10 @@
-package com.example.roi.climaar.graficos.figuras;
+package com.example.roi.climaar.modelo.figuras;
 
+import android.content.Context;
 import android.opengl.Matrix;
 
 import com.example.roi.climaar.R;
-import com.example.roi.climaar.graficos.Shader;
+import com.example.roi.climaar.vista.Shader;
 
 import java.io.Serializable;
 
@@ -32,11 +33,11 @@ public class Ventilador extends Figura implements Serializable{
     }
 
     @Override
-    public void loadFigura() {
+    public void loadFigura(Context context) {
         fan = new Obj(resourceIDFan);
         caja = new Obj(resourceIDCaja);
-        fan.loadFigura();
-        caja.loadFigura();
+        fan.loadFigura(context);
+        caja.loadFigura(context);
         isLoaded = true;
     }
 

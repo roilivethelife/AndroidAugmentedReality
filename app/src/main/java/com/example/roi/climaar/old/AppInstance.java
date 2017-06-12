@@ -1,43 +1,18 @@
-package com.example.roi.climaar;
+package com.example.roi.climaar.old;
 
-import android.content.Context;
 
-import com.example.roi.climaar.graficos.Mapa.Mapa;
-
-import java.util.ArrayList;
 
 /**
  * Created by roi on 19/04/17.
  */
 
+@Deprecated
 public class AppInstance {
-    private static final AppInstance ourInstance = new AppInstance();
 
-    private static final String FILE_MAPAS = "mapas.dat";
-    private ArrayList<Mapa> mapas;
-    private Context context;
-
-    public static AppInstance getInstance() {
-        return ourInstance;
-    }
-
-    private AppInstance() {
-        mapas = new ArrayList<>();
-    }
-
-    public void setContext(Context context) {
-        if(context!=null)
-            this.context = context;
-    }
-
-    public Context getContext() {
-        return context;
-    }
 
     public void guardarObjetos(){
         //TODO: descomentar funciones
         /*
-
         try
         {
             //Guardar mapas
@@ -82,7 +57,7 @@ public class AppInstance {
                 ois.close();
             }
             if(mapas.size()==0){
-                mapas.add(MapaControler.createLoadDefaultMap());
+                mapas.add(MapControler.createLoadDefaultMap());
             }
             Toast.makeText(context,"Mapas leidos: num="+mapas.size(),Toast.LENGTH_SHORT).show();
 
@@ -100,10 +75,7 @@ public class AppInstance {
             e.printStackTrace();
         }*/
         //mapas = new ArrayList<>();
-        //mapas.add(MapaControler.createLoadDefaultMap());
+        //mapas.add(MapControler.createLoadDefaultMap());
     }
 
-    public ArrayList<Mapa> getMapas() {
-        return mapas;
-    }
 }

@@ -1,10 +1,10 @@
-package com.example.roi.climaar.graficos.figuras;
+package com.example.roi.climaar.modelo.figuras;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import com.example.roi.climaar.graficos.Shader;
-import com.example.roi.climaar.graficos.Textura;
+import com.example.roi.climaar.vista.Shader;
 
 /**
  * Created by roi on 1/05/17.
@@ -35,7 +35,7 @@ public abstract class Ibo extends Figura {
     }
 
     @Override
-    public abstract void loadFigura();
+    public abstract void loadFigura(Context context);
 
     public void dibujar(Shader shader, float[] modelViewMatrix){
         if (vboBuffer[0] > 0 && iboBuffer[0] > 0) {

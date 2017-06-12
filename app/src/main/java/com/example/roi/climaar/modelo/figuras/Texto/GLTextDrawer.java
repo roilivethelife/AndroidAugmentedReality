@@ -1,4 +1,4 @@
-package com.example.roi.climaar.graficos.figuras.Texto;
+package com.example.roi.climaar.modelo.figuras.Texto;
 // This is a OpenGL ES 1.0 dynamic font rendering system. It loads actual font
 // files, generates a font map (texture) from them, and allows rendering of
 // text strings.
@@ -14,9 +14,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 
-import com.example.roi.climaar.graficos.Textura;
+import com.example.roi.climaar.modelo.figuras.Textura;
 
-public class GLTextDrawer {
+class GLTextDrawer {
 
     //--Constants--//
     public final static int CHAR_START = 32;           // First Character (ASCII Code)
@@ -57,7 +57,7 @@ public class GLTextDrawer {
     //--Constructor--//
     // D: save GL instance + asset manager, create arrays, and initialize the members
     // A: gl - OpenGL ES 10 Instance
-    public GLTextDrawer(AssetManager assets) {
+    GLTextDrawer(AssetManager assets) {
         this.assets = assets;                           // Save the Asset Manager Instance
 
         charWidths = new float[CHAR_CNT];               // Create the Array of Character Widths
@@ -94,7 +94,7 @@ public class GLTextDrawer {
     //    file - Filename of the font (.ttf, .otf) to use. In 'Assets' folder.
     //    size - Requested pixel size of font (height)
     //    padX, padY - Extra padding per character (X+Y Axis); to prevent overlapping characters.
-    public boolean load(String file, int size, int padX, int padY) {
+    boolean load(String file, int size, int padX, int padY) {
 
         // setup requested values
         fontPadX = padX;                                // Set Requested X Axis Padding
