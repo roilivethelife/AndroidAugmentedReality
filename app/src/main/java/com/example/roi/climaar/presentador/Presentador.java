@@ -151,7 +151,7 @@ public class Presentador implements  IPresentador{
 
     public void initApplicationAR(){
         //CrearRender y SurfaceView
-        ARRender arRender = new ARRender(arActivity,arActivity);
+        ARRender arRender = new ARRender(arActivity,arActivity, actualMapa);
         glView = new MiGlSurfaceView(arActivity);
         glView.setOnTouchInterface(arActivity);
         glView.setRenderer(arRender);

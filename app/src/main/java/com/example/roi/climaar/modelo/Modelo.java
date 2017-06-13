@@ -5,7 +5,9 @@ import android.graphics.PorterDuff;
 
 import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.figuras.Obj;
+import com.example.roi.climaar.modelo.figuras.SueloRadiante;
 import com.example.roi.climaar.modelo.figuras.Texto.GLText;
+import com.example.roi.climaar.modelo.figuras.Ventilador;
 import com.example.roi.climaar.modelo.mapa.MapElement;
 import com.example.roi.climaar.modelo.mapa.Mapa;
 import com.example.roi.climaar.old.AppInstance;
@@ -64,18 +66,17 @@ public class Modelo{
             cuboCentro.pos[1]=markerPos[1];
             cuboCentro.pos[2]=markerPos[2];
             map.mapaElements.add(cuboCentro);
-            /*
-            sueloRadiante = new MapaElement("Suelo",new SueloRadiante(421,337));
+
+            sueloRadiante = new MapElement("Suelo",new SueloRadiante(421,337));
             map.mapaElements.add(sueloRadiante);
             map.mapaElements.add(cuboCentro);
-            MapaElement fan = new MapaElement("Ventilador",new Ventilador(true));
+            MapElement fan = new MapElement("Ventilador",new Ventilador(true));
             //Posicion = posicion lampara
             fan.pos[0] = 197f;
             fan.pos[1] = 227.6f;
             fan.pos[2] = 166.8f;
             map.mapaElements.add(fan);
             //map.mapaElements.add(habitacionElement);
-            */
             GLText glText = new GLText("Esto es una prueba");
             glText.setScaleX(0.1f);
             glText.setScaleY(0.1f);

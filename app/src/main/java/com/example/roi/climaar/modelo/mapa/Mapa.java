@@ -14,9 +14,12 @@ public class Mapa implements Serializable{
     private String descripcion;
     public ArrayList<MapElement> mapaElements;
 
+    public float[] markerPos;
+
     public Mapa(String nombre, float[] tam, float[] markerPos) {
         this.nombre = nombre;
         mapaElements = new ArrayList<>();
+        this.markerPos = markerPos.clone();
     }
 
     public void loadFiguras(Context context){

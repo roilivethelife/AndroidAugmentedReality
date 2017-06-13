@@ -32,7 +32,7 @@ public class MapElement implements Serializable{
     }
 
 
-    void dibujar(Shader shader, float[] modelViewMatrix){
+    public void dibujar(Shader shader, float[] modelViewMatrix){
         if(visible){
             figura.dibujar(shader,modelViewMatrix);
         }
