@@ -4,6 +4,9 @@ import com.vuforia.State;
 
 import java.util.*;
 
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 /**
  * 
  */
@@ -48,5 +51,9 @@ public interface IPresentador {
     void onResume();
     void onDestroy();
     void loadFiguras();
+
+
+    void onSurfaceCreated();
+    void onSurfaceChanged(int width, int height);
 
 }
