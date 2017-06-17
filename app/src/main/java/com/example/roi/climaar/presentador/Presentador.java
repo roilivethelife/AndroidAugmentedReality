@@ -24,7 +24,7 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by roi on 11/06/17.
  */
 
-public class Presentador implements  IPresentador{
+public class Presentador implements  IPresentador, PositionControlerCallback{
     private static final String LOGTAG = "Presentador";
 
 
@@ -45,7 +45,7 @@ public class Presentador implements  IPresentador{
         this.vuforiaControler = new VuforiaControler(activity,this);
 
         this.modelo = Modelo.getInstance();
-        this.positionControler = new PositionControler(activity);
+        this.positionControler = new PositionControler(activity,this, false);
     }
 
 
@@ -157,7 +157,7 @@ public class Presentador implements  IPresentador{
         glView.setRenderer(arRender);
 
         //Añadir glView
-        arActivity.setContentView(glView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        iVista.addGLView(glView);
         glView.setVisibility(View.VISIBLE);
         arRender.setActive(true);
     }
@@ -167,4 +167,37 @@ public class Presentador implements  IPresentador{
     }
 
 
+    /**
+     * LLamado cuando hay un cambio en el tipo de tracking realizado
+     * @param status estado TrackStatus
+     */
+    @Override
+    public void onStateChanged(PositionControler.TrackStatus status) {
+        switch (status){
+            case NOT_TRACKED:
+                iVista.mostrarTextoDebug("Not tracked");
+                break;
+            case TRACKED:
+                iVista.mostrarTextoDebug("Tracked");
+                break;
+            case EXT_TRACKED:
+                iVista.mostrarTextoDebug("Ext tracked");
+                break;
+            case GIRO_TRACKED:
+                iVista.mostrarTextoDebug("Giro tracked");
+                break;
+
+        }
+    }
+
+    @Override
+    public void barometroCalibrado() {
+        iVista.mostrarToast("Barometro Calibrado");
+    }
+
+    @Override
+    public void giroCalibrado() {
+        iVista.mostrarToast("Giro Calibrado");
+
+    }
 }
