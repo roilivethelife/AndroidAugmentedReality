@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_border">
+
+    <TextView
+        android:id="@+id/textViewNombreElementoVirtual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Suelo radiante"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/checkBoxElementVisible"
+        android:padding="10dp"
+        android:text="Visible:"
+        android:textAlignment="textEnd"
+        android:textStyle="bold" />
+
+    <CheckBox
+        android:id="@+id/checkBoxElementVisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/textViewElementoStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textViewNombreElementoVirtual"
+        android:paddingBottom="5dp"
+        android:paddingStart="10dp"
+        android:text="Temp: 25ºC" />
+</RelativeLayout>

@@ -224,9 +224,6 @@ public class VuforiaControler implements SampleApplicationControl{
             // BEFORE the camera is started and video
             // background is configured.
             presentador.initApplicationAR();
-
-
-
             try
             {
                 vuforiaAppSession.startAR(CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_DEFAULT);
@@ -261,4 +258,16 @@ public class VuforiaControler implements SampleApplicationControl{
         vuforiaAppSession.onSurfaceChanged(w,h);
     }
 
+    public void setExtendedTrackingActive(boolean extendedTrackingActive){
+        if (extendedTrackingActive != this.extendedTrackingActive) {//hay un cambio
+            this.extendedTrackingActive = extendedTrackingActive;
+            for (int i = 0; i < currentDataSet.getNumTrackables(); i++) {
+                Trackable trackable = currentDataSet.getTrackable(i);
+                if(extendedTrackingActive)
+                    trackable.startExtendedTracking();
+                else
+                    trackable.stopExtendedTracking();
+            }
+        }
+    }
 }

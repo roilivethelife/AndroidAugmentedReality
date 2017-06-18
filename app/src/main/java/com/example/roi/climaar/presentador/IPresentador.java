@@ -1,5 +1,6 @@
 package com.example.roi.climaar.presentador;
 
+import com.example.roi.climaar.vista.MenuOpciones.MenuOpcionesListener;
 import com.vuforia.State;
 
 import java.util.*;
@@ -15,12 +16,8 @@ public interface IPresentador {
     /**
      * 
      */
-    void btnMostrarElementosPushed();
+    void btnFapPushed();
 
-    /**
-     * 
-     */
-    void btnOcultarElementosPushed();
 
     /**
      * @param elemento elemento
@@ -56,4 +53,6 @@ public interface IPresentador {
     void onSurfaceCreated();
     void onSurfaceChanged(int width, int height);
 
+
+    void onBackPressed();
 }

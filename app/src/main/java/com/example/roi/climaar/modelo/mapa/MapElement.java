@@ -37,4 +37,8 @@ public class MapElement implements Serializable{
             figura.dibujar(shader,modelViewMatrix);
         }
     }
+
+    public String getName() {
+        return name;
+    }
 }

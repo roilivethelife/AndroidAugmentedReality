@@ -1,6 +1,9 @@
 package com.example.roi.climaar.presentador;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,11 +11,13 @@ import android.widget.RelativeLayout;
 
 import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.Modelo;
+import com.example.roi.climaar.modelo.mapa.MapElement;
 import com.example.roi.climaar.modelo.mapa.Mapa;
 import com.example.roi.climaar.presentador.vuforia.VuforiaControler;
 import com.example.roi.climaar.vista.ARActivity;
 import com.example.roi.climaar.vista.ARRender;
 import com.example.roi.climaar.vista.IVista;
+import com.example.roi.climaar.vista.MenuOpciones;
 import com.example.roi.climaar.vista.MiGlSurfaceView;
 import com.vuforia.State;
 
@@ -24,7 +29,7 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by roi on 11/06/17.
  */
 
-public class Presentador implements  IPresentador, PositionControlerCallback{
+public class Presentador implements  IPresentador, PositionControlerCallback, MenuOpciones.MenuOpcionesListener, View.OnClickListener {
     private static final String LOGTAG = "Presentador";
 
 
@@ -35,6 +40,10 @@ public class Presentador implements  IPresentador, PositionControlerCallback{
     private VuforiaControler vuforiaControler;
     private PositionControler positionControler;
     private IVista iVista;
+
+    private MenuOpciones menuOpciones;
+    private boolean fabPressed;
+    private FloatingActionButton fab;
 
     private Mapa actualMapa;
 
@@ -50,18 +59,9 @@ public class Presentador implements  IPresentador, PositionControlerCallback{
 
 
     /**
-     *
      */
     @Override
-    public void btnMostrarElementosPushed() {
-
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void btnOcultarElementosPushed() {
+    public void btnFapPushed() {
 
     }
 
@@ -103,6 +103,26 @@ public class Presentador implements  IPresentador, PositionControlerCallback{
         Log.d(LOGTAG,"Presentador onCreate");
         iVista.mostrarBarraCargando(true);
         vuforiaControler.onCreate();
+
+        crearMenuOpciones();
+        configurarFAB();
+
+
+    }
+
+    private void configurarFAB() {
+        fab = iVista.getFAB();
+        fab.setOnClickListener(this);
+    }
+
+    private void crearMenuOpciones() {
+        menuOpciones = iVista.getMenuOpciones();
+        for (MapElement mapElement :
+                actualMapa.mapaElements) {
+            menuOpciones.addElemento(arActivity,mapElement,"estado",true);
+        }
+        menuOpciones.makeMenu(arActivity,actualMapa.getNombre(),true,true);
+        menuOpciones.setListener(this);
     }
 
     @Override
@@ -127,11 +147,18 @@ public class Presentador implements  IPresentador, PositionControlerCallback{
             glView.onResume();
         }
         vuforiaControler.onResume();
+        fabPressed = false;
+        menuOpciones.ocultarMenu();
     }
 
     @Override
     public void onDestroy() {
         vuforiaControler.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        askUserExit();
     }
 
     @Override
@@ -199,5 +226,75 @@ public class Presentador implements  IPresentador, PositionControlerCallback{
     public void giroCalibrado() {
         iVista.mostrarToast("Giro Calibrado");
 
+    }
+
+    @Override
+    public void setUseBarometerPressed(boolean useBarometer) {
+        positionControler.setUseBarometer(useBarometer);
+    }
+
+    @Override
+    public void setExtTrackingPressed(boolean extTrackinActive) {
+        vuforiaControler.setExtendedTrackingActive(extTrackinActive);
+    }
+
+    @Override
+    public void setVisibleElementPressed(MapElement element, boolean isVisible) {
+        element.visible = isVisible;
+    }
+
+    @Override
+    public void resetTrackingPressed() {
+        positionControler.resetVars();
+    }
+
+    @Override
+    public void exitButtonPressed() {
+        fabMenuClose();
+        askUserExit();
+    }
+
+    private void askUserExit(){
+        new AlertDialog.Builder(arActivity)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Saliendo")
+                .setMessage("¿Está seguro de que quiere salir?")
+                .setPositiveButton("Si", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        arActivity.finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.fab){
+            fabPressed = !fabPressed;
+            if(fabPressed){
+                fabMenuOpen();
+            }else{
+                fabMenuClose();
+            }
+        }
+    }
+
+    private void fabMenuOpen() {
+        fab.setImageResource(R.drawable.ic_cancel_black_24dp);
+        menuOpciones.mostrarMenu();
+    }
+
+    private void fabMenuClose(){
+        fab.setImageResource(R.drawable.ic_menu_black_24dp);
+        menuOpciones.ocultarMenu();
     }
 }

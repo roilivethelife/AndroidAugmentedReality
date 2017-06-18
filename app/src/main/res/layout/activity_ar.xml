@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_ar"
+<android.support.design.widget.CoordinatorLayout xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout_ar"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,51 +22,39 @@
             android:id="@+id/text_view_top_ar"
             android:layout_margin="30dp"
             android:padding="5dp"
+
             android:background="#88000088"
             android:textColor="@android:color/white" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="false"
-            android:padding="10dp">
+            android:layout_alignParentEnd="true"
+            android:layout_margin="28dp"
+            android:src="@drawable/ic_menu_black_24dp"
+            app:borderWidth="0dp"
+            app:fabSize="normal" />
 
-            <ToggleButton
-                android:text="ToggleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/toggleButtonExtTracking"
-                android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:textOff="Ext.Track."
-                android:textOn="Ext.Track."
-                android:checked="false" />
+        <com.example.roi.climaar.vista.MenuOpciones
+            android:id="@+id/menuOpciones"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toLeftOf="@id/fab" />
 
-            <Button
-                android:text="GiroSolo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button_ar_put_obj"
-                android:layout_weight="1"
-                android:layout_margin="10dp"/>
 
-            <Button
-                android:text="Volver"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button_ar_back"
-                android:layout_weight="1"
-                android:layout_margin="10dp" />
-        </LinearLayout>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/layoutLoading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/black"
-        android:visibility="gone">
+        android:visibility="gone"
+        >
 
         <ProgressBar
             android:id="@+id/loading_indicator"
@@ -76,4 +65,4 @@
             android:layout_centerVertical="true" />
 
     </RelativeLayout>
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

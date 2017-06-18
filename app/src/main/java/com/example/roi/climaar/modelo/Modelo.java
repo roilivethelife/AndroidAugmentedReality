@@ -69,7 +69,6 @@ public class Modelo{
 
             sueloRadiante = new MapElement("Suelo",new SueloRadiante(421,337));
             map.mapaElements.add(sueloRadiante);
-            map.mapaElements.add(cuboCentro);
             MapElement fan = new MapElement("Ventilador",new Ventilador(true));
             //Posicion = posicion lampara
             fan.pos[0] = 197f;

@@ -122,13 +122,13 @@ public class PositionControler implements SensorEventListener{
                 mSensorManager.registerListener(this, mSensorBaro, SensorManager.SENSOR_DELAY_GAME);//Una por segundo
             listenerRegistered=true;
         }
+        trackStatus = TrackStatus.NOT_TRACKED;
         resetVars();
     }
 
-    private void resetVars(){
+    public void resetVars(){
         firstTracked=false;
         calibrated = false;
-        trackStatus = TrackStatus.NOT_TRACKED;
         lastPresure=1013.25f;
     }
 
