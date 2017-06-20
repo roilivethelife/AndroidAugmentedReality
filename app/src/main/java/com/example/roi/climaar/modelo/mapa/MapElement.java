@@ -17,6 +17,7 @@ public class MapElement implements Serializable{
     public float[] pos= {0.0f,0.0f,0.0f};
 
 
+
     private int objResourceId;
 
 
@@ -40,5 +41,9 @@ public class MapElement implements Serializable{
 
     public String getName() {
         return name;
+    }
+
+    public boolean isDynamic() {
+        return figura.isDynamic();
     }
 }

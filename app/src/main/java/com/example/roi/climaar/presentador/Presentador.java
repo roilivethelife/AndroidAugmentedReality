@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.example.roi.climaar.R;
+import com.example.roi.climaar.modelo.JsonRest.WebRestData;
 import com.example.roi.climaar.modelo.Modelo;
 import com.example.roi.climaar.modelo.mapa.MapElement;
 import com.example.roi.climaar.modelo.mapa.Mapa;
@@ -41,6 +42,8 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
     private PositionControler positionControler;
     private IVista iVista;
 
+    private WebRestData webRestData;
+
     private MenuOpciones menuOpciones;
     private boolean fabPressed;
     private FloatingActionButton fab;
@@ -55,6 +58,8 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
 
         this.modelo = Modelo.getInstance();
         this.positionControler = new PositionControler(activity,this, false);
+
+        this.webRestData = new WebRestData("209",mapa.mapaElements);
     }
 
 
@@ -130,6 +135,7 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
         Log.d(LOGTAG,"Presentador onPause");
         vuforiaControler.onPause();
         positionControler.onPause();
+        webRestData.onPause();
         if (glView != null)
         {
             glView.setVisibility(View.INVISIBLE);
@@ -149,6 +155,7 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
         vuforiaControler.onResume();
         fabPressed = false;
         menuOpciones.ocultarMenu();
+        webRestData.onResume();
     }
 
     @Override

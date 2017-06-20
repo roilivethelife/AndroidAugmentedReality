@@ -11,13 +11,15 @@ import java.io.Serializable;
  */
 
 public abstract class Figura implements Serializable{
+    boolean isDynamic;
+
     public enum FigureType {
         OBJ, SUELO_RADIANTE, VENTILADOR, TEXT
     }
 
     private FigureType type;
 
-    protected transient boolean isLoaded = false;
+    protected boolean isLoaded = false;
 
     public boolean isLoaded() {
         return isLoaded;
@@ -38,4 +40,7 @@ public abstract class Figura implements Serializable{
 
     public abstract void dibujar(Shader shader, float[] modelViewMatrix);
 
+    public boolean isDynamic() {
+        return isDynamic;
+    }
 }
