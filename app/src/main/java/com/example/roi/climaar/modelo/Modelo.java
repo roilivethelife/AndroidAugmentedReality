@@ -53,9 +53,9 @@ public class Modelo{
             tamMap[1] = 227.6f;
             tamMap[2] = 337.8f;
             float[] markerPos = new float[3];
-            markerPos[0]=114f;
-            markerPos[1]=89.3f;
-            markerPos[2]=40f;
+            markerPos[0]=114f;//Distancia desde pared izq
+            markerPos[1]=89.3f;//Altura desde suelo
+            markerPos[2]=40f;//Distancia desde pared
             Mapa map = new Mapa("CuartoFondo",tamMap,markerPos);
             map.setDescripcion("DefaultMap: cuartoFondo");
             MapElement cuboCentro= null;
@@ -65,6 +65,7 @@ public class Modelo{
             cuboCentro.pos[0]=markerPos[0];
             cuboCentro.pos[1]=markerPos[1];
             cuboCentro.pos[2]=markerPos[2];
+            cuboCentro.alignCamera=true;
             map.mapaElements.add(cuboCentro);
 
             sueloRadiante = new MapElement("Suelo",new SueloRadiante(421,337));
@@ -80,6 +81,7 @@ public class Modelo{
             glText.setScaleX(0.1f);
             glText.setScaleY(0.1f);
             MapElement texto = new MapElement("Texto",glText);
+            texto.alignCamera=true;
             texto.pos[0]=markerPos[0];
             texto.pos[1]=markerPos[1];
             texto.pos[2]=markerPos[2];

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/toolbarHelp"
+        android:icon="@drawable/ic_help_black_24dp"
+        app:showAsAction="ifRoom"
+        android:title="Ayuda">
+    </item>
+    <item
+        android:id="@+id/toolbarSettings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        app:showAsAction="ifRoom|withText"
+        android:title="Configuración">
+    </item>
+</menu>

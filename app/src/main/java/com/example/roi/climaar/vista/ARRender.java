@@ -182,7 +182,21 @@ public class ARRender implements GLSurfaceView.Renderer , SampleAppRendererContr
                 if(mapElement.visible) {
                     float[] tempModelViewMatrix = matrix.clone();
                     Matrix.translateM(tempModelViewMatrix, 0, mapElement.pos[0], mapElement.pos[1], mapElement.pos[2]);
-                    Matrix.scaleM(tempModelViewMatrix, 0, mapElement.scale[0], mapElement.scale[1], mapElement.scale[2]);
+                    if(!mapElement.alignCamera) {
+                        Matrix.scaleM(tempModelViewMatrix, 0, mapElement.scale[0], mapElement.scale[1], mapElement.scale[2]);
+                    }else{
+                        double ang = -Math.toDegrees(Math.atan2(tempModelViewMatrix[4],tempModelViewMatrix[0]));
+                        tempModelViewMatrix[0]=mapElement.scale[0];
+                        tempModelViewMatrix[1]=0f;
+                        tempModelViewMatrix[2]=0f;
+                        tempModelViewMatrix[4]=0f;
+                        tempModelViewMatrix[5]=-mapElement.scale[1];
+                        tempModelViewMatrix[6]=0f;
+                        tempModelViewMatrix[8]=0f;
+                        tempModelViewMatrix[9]=0f;
+                        tempModelViewMatrix[10]=-mapElement.scale[2];
+                        Matrix.rotateM(tempModelViewMatrix,0,(float)ang,0,0,1);
+                    }
                     mapElement.dibujar(shader, tempModelViewMatrix);
                 }
             }

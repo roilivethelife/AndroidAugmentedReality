@@ -1,15 +1,21 @@
 package com.example.roi.climaar;
 
 import android.Manifest;
-import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.roi.climaar.modelo.Modelo;
@@ -19,10 +25,14 @@ import com.example.roi.climaar.vista.ARActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MenuActivity extends Activity {
-    private static final String LOGTAG = "MenuActivity";
+public class MainMenuActivity extends AppCompatActivity implements View.OnClickListener, MapaListView.MapaListViewInterface{
+    private static final String LOGTAG = "MainMenuActivity";
 
-    private Button btnArActivity;
+    private MapaListView mapaListView;
+    private TextView textViewUbicacionSeleccionada;
+    private AlertDialog dialogAyuda;
+    private Mapa mapaSeleccionado;
+    private Button buttonMainIniciarAR;
 
 
     private boolean permissionCamera = false;
@@ -43,42 +53,57 @@ public class MenuActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //comprueba que permisos están activos y pide al usuario
-        comprobarPedirPermisos();
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
-
-        btnArActivity = (Button) findViewById(R.id.btn_aractivity);
-        btnArActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (permisosOk()) {
-                    //TODO: AUTOLOADMAP: Eliminar lineas y descomentar
-                    Intent intent = new Intent(view.getContext(), ARActivity.class);
-                    intent.putExtra("MAPA", Modelo.getInstance().getMapas().get(0));
-                    Log.d(LOGTAG, "StartActivity");
-                    startActivity(intent);
-                    /*
-                    AppInstance.getInstance().leerObjetos();
-                    Intent intent = new Intent(view.getContext(), SelectMapActivity.class);
-                    intent.putExtra("TITULO","Seleccione el mapa a utilizar:");
-                    startActivityForResult(intent, RESULT_PICK_MAP);*/
-                } else {
-                    Log.d(LOGTAG, "Error boton click: no estan todos los permisos");
-                    //TODO: mensaje al usuario
-                }
-            }
-        });
+        buttonMainIniciarAR = (Button) findViewById(R.id.buttonMainIniciarAR);
+        buttonMainIniciarAR.setOnClickListener(this);
+        mapaListView = (MapaListView)findViewById(R.id.mapa_list_view);
+        mapaListView.setListener(this);
+        textViewUbicacionSeleccionada = (TextView) findViewById(R.id.textViewUbicacionSeleccionada);
+        crearDialogAyuda();
     }
+
+    private void crearDialogAyuda() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Ayuda")
+                .setMessage("Este es el mensaje de ayuda de la aplicación.");
+        dialogAyuda = builder.create();
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         Modelo.getInstance().setContext(this);
+        //comprueba que permisos están activos y pide al usuario
+        comprobarPedirPermisos();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar_main_activity,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.toolbarHelp:
+                dialogAyuda.show();
+                break;
+            case R.id.toolbarSettings:
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     private void comprobarPedirPermisos() {
@@ -186,27 +211,82 @@ public class MenuActivity extends Activity {
         }
     }
 
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param view The view that was clicked.
+     */
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode==RESULT_CANCELED){
-            Toast.makeText(this, "No se ha seleccionado ningún mapa", Toast.LENGTH_SHORT).show();
-        }else {
-            switch (requestCode) {
-                case RESULT_PICK_MAP:
-                    Mapa map=null;
-                    if(data!=null && data.getExtras()!=null) {
-                        map = (Mapa) data.getExtras().getSerializable("MAPA");
-                    }
-                    if(map!=null) {
-                        Toast.makeText(this, "Mapa seleciconado:" + map.getNombre(), Toast.LENGTH_SHORT).show();
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.buttonMainIniciarAR:
+                if (permisosOk()) {
+                    if(mapaSeleccionado!=null) {
                         Intent intent = new Intent(this, ARActivity.class);
-                        intent.putExtra("MAPA",map);
+                        intent.putExtra("MAPA",mapaSeleccionado);
                         startActivity(intent);
+                    }else{
+                        Toast.makeText(this, "No se ha seleccionado ningún mapa", Toast.LENGTH_SHORT).show();
                     }
-                    break;
-                default:
-                    break;
-            }
+                } else {
+                    Log.d(LOGTAG, "Error boton click: no estan todos los permisos");
+                    Toast.makeText(this, "Error, hay permisos no concedidos", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
+    }
+
+    @Override
+    public void onSelectedMapaChanged() {
+        mapaSeleccionado = mapaListView.getMapaSeleccionado();
+        if(mapaSeleccionado==null){
+            textViewUbicacionSeleccionada.setText("Ningun mapa seleccionado");
+        }else{
+            textViewUbicacionSeleccionada.setText(mapaSeleccionado.getNombre());
+        }
+    }
+
+    @Override
+    public void onAddNewMapPushed() {
+        Intent intent = new Intent(this, EditMapActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onEditMapPushed(Mapa mapaSeleccionado) {
+        Intent intent = new Intent(this, EditMapActivity.class);
+        intent.putExtra("MAPA",mapaSeleccionado);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onDelMapPushed(Mapa mapaSeleccionado) {
+        AlertDialog.Builder dialogConfirmDelete = new AlertDialog.Builder(this);
+
+        // set title
+        dialogConfirmDelete.setTitle("¿Eliminar el mapa?");
+
+        // set dialog message
+        dialogConfirmDelete
+                .setMessage("¿Seguro que quiere eliminar el mapa seleccionado?\n" +
+                        "No podrá volver a recuperarlo")
+                .setCancelable(false)
+                .setPositiveButton("Eliminar",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        mapaListView.deleteSelectedItem();
+                    }
+                })
+                .setNegativeButton("Cancelar",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = dialogConfirmDelete.create();
+
+        // show it
+        alertDialog.show();
     }
 }

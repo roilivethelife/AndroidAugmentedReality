@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:roi="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:divider="?android:dividerHorizontal"
+    android:orientation="vertical"
+    android:showDividers="middle"
+    tools:context="com.example.roi.climaar.EditMapActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_new_map"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="16dp"
+                    android:text="Encabezado"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="18sp" />
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="text"
+                roi:title="Nombre mapa" />
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="text"
+                roi:title="Descripción" />
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeNumHabita"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="text"
+                roi:title="Nº de habitación" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="16dp"
+                    android:text="Tamaño de la sala"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="18sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeTamX"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="decimal"
+                roi:title="Ancho" />
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeTamY"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="decimal"
+                roi:title="Altura" />
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeTamZ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="decimal"
+                roi:title="Longitud" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="16dp"
+                    android:text="Posición marcador"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="18sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeMarkerX"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="decimal"
+                roi:title="Posición eje X" />
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeMarkerY"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="decimal"
+                roi:title="Posición eje Y" />
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeMarkerZ"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="decimal"
+                roi:title="Posición eje Z" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="16dp"
+                    android:text="Elementos"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="18sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <com.example.roi.climaar.ListItemMapaConfig
+                android:id="@+id/mapaAttributeConfigElementos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                roi:inputType="none"
+                roi:title="Configurar elementos" />
+            </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+</LinearLayout>

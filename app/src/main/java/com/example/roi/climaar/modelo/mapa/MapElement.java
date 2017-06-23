@@ -15,7 +15,7 @@ public class MapElement implements Serializable{
     public boolean visible=true;
     public float[] scale={1.0f,1.0f,1.0f};
     public float[] pos= {0.0f,0.0f,0.0f};
-
+    public boolean alignCamera=false;
 
 
     private int objResourceId;

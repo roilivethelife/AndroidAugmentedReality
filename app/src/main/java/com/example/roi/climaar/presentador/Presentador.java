@@ -264,9 +264,9 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
     private void askUserExit(){
         new AlertDialog.Builder(arActivity)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Saliendo")
-                .setMessage("¿Está seguro de que quiere salir?")
-                .setPositiveButton("Si", new DialogInterface.OnClickListener()
+                .setTitle("Salir modo AR")
+                .setMessage("¿Está seguro de que quiere salir del modo Realidad Aumentada y volver al menú principal?")
+                .setPositiveButton("Salir", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -274,7 +274,7 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
                     }
 
                 })
-                .setNegativeButton("No", null)
+                .setNegativeButton("Cancelar", null)
                 .show();
     }
 
