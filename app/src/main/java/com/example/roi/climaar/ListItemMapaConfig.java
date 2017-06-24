@@ -1,6 +1,7 @@
 package com.example.roi.climaar;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -26,17 +27,23 @@ public class ListItemMapaConfig extends LinearLayout{
 
     private TextView title;
     private TextView summary;
-    private String descripcion;
-    private AlertDialog alertDialog;
+    private AlertDialog.Builder alertDialogBuilder;
     private EditText input;
     private LinearLayout widgetLayout;
+
+    private int valueId;
     private int inputType;
+    private String value;
+    private String inputText;
+
+    private ListItemMapaConfigInterface listener;
 
     public ListItemMapaConfig(Context context) {
         super(context);
-        inicializar(context);
         inputType=0;
-        descripcion = "";
+        value = "";
+        inputText = "";
+        inicializar(context);
     }
 
     public ListItemMapaConfig(Context context, @Nullable AttributeSet attrs) {
@@ -46,8 +53,8 @@ public class ListItemMapaConfig extends LinearLayout{
         // Procesamos los atributos XML personalizados
         TypedArray a = getContext().obtainStyledAttributes(attrs,R.styleable.ListItemMapaConfig);
         String textoBoton = a.getString(R.styleable.ListItemMapaConfig_title);
-        descripcion = a.getString(R.styleable.ListItemMapaConfig_descInputType);
-        if(descripcion==null) descripcion="";
+        inputText = a.getString(R.styleable.ListItemMapaConfig_descInputType);
+        if(inputText==null) inputText="";
         inputType = a.getInt(R.styleable.ListItemMapaConfig_inputType,0);
         if(textoBoton!=null) {
             title.setText(textoBoton);
@@ -64,22 +71,28 @@ public class ListItemMapaConfig extends LinearLayout{
         title = (TextView) findViewById(R.id.title);
         summary = (TextView) findViewById(R.id.summary);
         widgetLayout = (LinearLayout) findViewById(R.id.widget_frame);
-        crearAlertDialog(context);
+        crearAlertDialogBuilder(context);
     }
 
-    private void crearAlertDialog(Context context) {
+    private void crearAlertDialogBuilder(Context context) {
         //if(inputType==0) return;
-        alertDialog = new AlertDialog.Builder(context).create();
+        alertDialogBuilder = new AlertDialog.Builder(context);
         input = new EditText(context);
-        input.setHint("hint");
-        alertDialog.setTitle("title");
-        alertDialog.setMessage("message");
-        alertDialog.setView(input);
-        if(input==null || alertDialog==null){
-            Log.d("LIst","CrearAlertDialog=Null");
-        }else{
-            Log.d("LIst","CrearAlertDialog=OK");
-        }
+        alertDialogBuilder.setView(input);
+        alertDialogBuilder.setPositiveButton("Guardar",new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog,int id) {
+                value = input.getText().toString();
+                summary.setText(value);
+                if (listener != null) {
+                    listener.onDataChanged(valueId,value);
+                }
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancelar",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                });
     }
 
     public LinearLayout getWidgetLayout() {
@@ -95,9 +108,15 @@ public class ListItemMapaConfig extends LinearLayout{
     }
 
     public void setData(AdaptadorEditMap.AttributeData data){
-        this.title.setText(data.title);
-        this.summary.setText(data.summary);
+        value = data.value;
+        inputText = data.inputMessage;
         inputType = data.inputType;
+        this.title.setText(data.title);
+        this.summary.setText(value);
+        alertDialogBuilder.setTitle(data.title);
+        alertDialogBuilder.setMessage(inputText);
+        input.setText(value);
+        valueId= data.valueId;
     }
 
 
@@ -111,21 +130,31 @@ public class ListItemMapaConfig extends LinearLayout{
         super.setOnClickListener(l);
     }
 
+    public void setOnDataChandedListener(ListItemMapaConfigInterface listener){
+        this.listener = listener;
+    }
+
     public void onClick() {
         Log.d("ListItem","onClick()");
         switch (inputType){
             case TYPE_EDITTEXT://text
-                if(input!=null){
-                    input.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_NORMAL);
-                }
-                alertDialog.show();
+                input.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_NORMAL);
+                alertDialogBuilder.create().show();
                 break;
             case TYPE_DECIMAL://float
-                if(input!=null)  input.setInputType(InputType.TYPE_CLASS_NUMBER| InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                alertDialog.show();
+                input.setInputType(InputType.TYPE_CLASS_NUMBER| InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                alertDialogBuilder.create().show();
+                break;
+            case TYPE_NUMBER://numero
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                alertDialogBuilder.create().show();
                 break;
             default:
             case TYPE_NONE:
         }
+    }
+
+    public interface ListItemMapaConfigInterface{
+        void onDataChanged(int id, String value);
     }
 }

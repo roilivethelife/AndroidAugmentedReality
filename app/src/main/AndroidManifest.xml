@@ -40,7 +40,7 @@
             android:name=".vista.ARActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
-        <activity android:name=".EditMapActivity">
+        <activity android:name=".EditMapActivity2">
         </activity>
     </application>
 

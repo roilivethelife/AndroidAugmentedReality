@@ -1,19 +1,32 @@
 package com.example.roi.climaar;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.SimpleOnItemTouchListener;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.mapa.Mapa;
 
-public class EditMapActivity extends AppCompatActivity implements View.OnClickListener{
+public class EditMapActivity2 extends AppCompatActivity implements View.OnClickListener{
+    public static final int ID_NAME = 1;
+    public static final int ID_DESC = 2;
+    public static final int ID_NUM_DESP= 3;
+    public static final int ID_MAPA_X = 4;
+    public static final int ID_MAPA_Y = 5;
+    public static final int ID_MAPA_Z = 6;
+    public static final int ID_MRK_X = 7;
+    public static final int ID_MRK_Y = 8;
+    public static final int ID_MRK_Z = 9;
+    public static final int ID_EDIT_ELEMENTS = 10;
 
 
     private Mapa mapa;

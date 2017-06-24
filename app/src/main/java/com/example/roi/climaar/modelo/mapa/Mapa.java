@@ -18,11 +18,22 @@ public class Mapa implements Serializable{
     public float[] tam;
     public float[] markerPos;
 
+
+    public Mapa(Mapa mapa){
+        nombre = mapa.nombre;
+        descripcion = mapa.descripcion;
+        numDespacho = mapa.numDespacho;
+        tam = mapa.tam.clone();
+        markerPos = mapa.markerPos.clone();
+        mapaElements = new ArrayList<>();
+        for (MapElement mapElement :
+                mapa.mapaElements) {
+            mapaElements.add(new MapElement(mapElement));
+        }
+    }
+
     public Mapa(String nombre){
-        this.nombre=nombre;
-        descripcion="";
-        markerPos = new float[3];
-        tam = new float[3];
+        this(nombre,new float[3],new float[3]);
     }
 
     public Mapa(String nombre, float[] tam, float[] markerPos) {

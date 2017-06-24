@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by roi on 23/06/17.
  */
 
-public class AdaptadorEditMap extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener{
+public class AdaptadorEditMap extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener, ListItemMapaConfig.ListItemMapaConfigInterface{
     private View.OnClickListener listener;
     ArrayList<EditMapContainer> datos;
     Mapa mapaActual;
@@ -25,28 +25,28 @@ public class AdaptadorEditMap extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.mapaActual=mapaActual;
         datos = new ArrayList<>();
         datos.add(new HeaderData("Datos mapa"));
-        datos.add(new AttributeData("Nombre",
+        datos.add(new AttributeData(EditMapActivity2.ID_NAME,"Nombre",
                 mapaActual.getNombre(),"Nombre del mapa",ListItemMapaConfig.TYPE_EDITTEXT));
-        datos.add(new AttributeData("Descripcion",
+        datos.add(new AttributeData(EditMapActivity2.ID_DESC,"Descripcion",
                 mapaActual.getDescripcion(),"Descripción del mapa",ListItemMapaConfig.TYPE_EDITTEXT));
-        datos.add(new AttributeData("NºDespacho",
+        datos.add(new AttributeData(EditMapActivity2.ID_NUM_DESP,"NºDespacho",
                 ""+mapaActual.getNumDespacho(),"Número de despacho del mapa",ListItemMapaConfig.TYPE_NUMBER));
         datos.add(new HeaderData("Tamaño de la sala"));
-        datos.add(new AttributeData("Ancho",
+        datos.add(new AttributeData(EditMapActivity2.ID_MAPA_X,"Ancho",
                 ""+mapaActual.tam[0],"",ListItemMapaConfig.TYPE_DECIMAL));
-        datos.add(new AttributeData("Alto",
+        datos.add(new AttributeData(EditMapActivity2.ID_MAPA_Y,"Alto",
                 ""+mapaActual.tam[1],"",ListItemMapaConfig.TYPE_DECIMAL));
-        datos.add(new AttributeData("Largo",
+        datos.add(new AttributeData(EditMapActivity2.ID_MAPA_Z,"Largo",
                 ""+mapaActual.tam[2],"",ListItemMapaConfig.TYPE_DECIMAL));
         datos.add(new HeaderData("Posición Marcador"));
-        datos.add(new AttributeData("Posición X",
+        datos.add(new AttributeData(EditMapActivity2.ID_MRK_X,"Posición X",
                 ""+mapaActual.markerPos[0],"",ListItemMapaConfig.TYPE_DECIMAL));
-        datos.add(new AttributeData("Posición Y",
+        datos.add(new AttributeData(EditMapActivity2.ID_MRK_Y,"Posición Y",
                 ""+mapaActual.markerPos[1],"",ListItemMapaConfig.TYPE_DECIMAL));
-        datos.add(new AttributeData("Posición Z",
+        datos.add(new AttributeData(EditMapActivity2.ID_MRK_Z,"Posición Z",
                 ""+mapaActual.markerPos[2],"",ListItemMapaConfig.TYPE_DECIMAL));
         datos.add(new HeaderData("Elementos de climatización"));
-        datos.add(new AttributeData("Editar elementos",
+        datos.add(new AttributeData(EditMapActivity2.ID_EDIT_ELEMENTS,"Editar elementos",
                 "Editar los elementos de climatización del mapa","",ListItemMapaConfig.TYPE_NONE));
     }
 
@@ -100,6 +100,50 @@ public class AdaptadorEditMap extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    @Override
+    public void onDataChanged(int id, String value) {
+        float fValue=0.0f;
+        switch (id){
+            case EditMapActivity2.ID_NAME:
+                mapaActual.setNombre(value);
+                break;
+            case EditMapActivity2.ID_DESC:
+                mapaActual.setDescripcion(value);
+                break;
+            case EditMapActivity2.ID_NUM_DESP:
+                mapaActual.setNumDespacho(Integer.parseInt(value));
+                break;
+            case EditMapActivity2.ID_MAPA_X:
+                fValue = Float.parseFloat(value);
+                mapaActual.tam[0]=fValue;
+                break;
+            case EditMapActivity2.ID_MAPA_Y:
+                fValue = Float.parseFloat(value);
+                mapaActual.tam[1]=fValue;
+                break;
+            case EditMapActivity2.ID_MAPA_Z:
+                fValue = Float.parseFloat(value);
+                mapaActual.tam[2]=fValue;
+                break;
+            case EditMapActivity2.ID_MRK_X:
+                fValue = Float.parseFloat(value);
+                mapaActual.markerPos[0]=fValue;
+                break;
+            case EditMapActivity2.ID_MRK_Y:
+                fValue = Float.parseFloat(value);
+                mapaActual.markerPos[1]=fValue;
+                break;
+            case EditMapActivity2.ID_MRK_Z:
+                fValue = Float.parseFloat(value);
+                mapaActual.markerPos[2]=fValue;
+                break;
+        }
+    }
+
+    public Mapa getMapaActual() {
+        return mapaActual;
+    }
+
     class MapHeaderViewHolder extends RecyclerView.ViewHolder{
         private TextView header;
         public MapHeaderViewHolder(View itemView) {
@@ -142,17 +186,18 @@ public class AdaptadorEditMap extends RecyclerView.Adapter<RecyclerView.ViewHold
         String headerText;
     }
     class AttributeData extends EditMapContainer{
-        public AttributeData(String title, String summary, String message, int inputType) {
+        public AttributeData(int valueId,String title, String value, String inputMessage, int inputType) {
             viewType=2;
             this.title = title;
-            this.summary = summary;
-            this.message = message;
+            this.value = value;
+            this.inputMessage = inputMessage;
             this.inputType = inputType;
         }
 
         String title;
-        String summary;
-        String message;
+        String value;
+        String inputMessage;
         int inputType;
+        int valueId;
     }
 }

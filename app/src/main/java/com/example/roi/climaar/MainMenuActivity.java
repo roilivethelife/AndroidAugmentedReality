@@ -249,13 +249,13 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onAddNewMapPushed() {
-        Intent intent = new Intent(this, EditMapActivity.class);
+        Intent intent = new Intent(this, EditMapActivity2.class);
         startActivity(intent);
     }
 
     @Override
     public void onEditMapPushed(Mapa mapaSeleccionado) {
-        Intent intent = new Intent(this, EditMapActivity.class);
+        Intent intent = new Intent(this, EditMapActivity2.class);
         intent.putExtra("MAPA",mapaSeleccionado);
         startActivity(intent);
     }
@@ -267,7 +267,7 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
         // set title
         dialogConfirmDelete.setTitle("¿Eliminar el mapa?");
 
-        // set dialog message
+        // set dialog inputMessage
         dialogConfirmDelete
                 .setMessage("¿Seguro que quiere eliminar el mapa seleccionado?\n" +
                         "No podrá volver a recuperarlo")

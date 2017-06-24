@@ -17,10 +17,15 @@ public class MapElement implements Serializable{
     public float[] pos= {0.0f,0.0f,0.0f};
     public boolean alignCamera=false;
 
+    public MapElement(MapElement m){
+        this.name = m.name;
+        figura = m.figura;
+        scale = scale.clone();
+        pos = pos.clone();
+        alignCamera = m.alignCamera;
+        visible = m.visible;
 
-    private int objResourceId;
-
-
+    }
 
     /**
      * Constructor
