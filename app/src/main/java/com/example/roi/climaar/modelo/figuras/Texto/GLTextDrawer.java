@@ -18,6 +18,14 @@ import com.example.roi.climaar.modelo.figuras.Textura;
 
 class GLTextDrawer {
 
+    private static final String FONT_DEFAULT = "Roboto-Regular.ttf";
+    private static final int SIZE_DEFAULT = 100;
+
+
+    private static GLTextDrawer instance = new GLTextDrawer();
+
+    private boolean isLoaded;
+
     //--Constants--//
     public final static int CHAR_START = 32;           // First Character (ASCII Code)
     public final static int CHAR_END = 126;            // Last Character (ASCII Code)
@@ -28,10 +36,11 @@ class GLTextDrawer {
 
     public final static int FONT_SIZE_MIN = 6;         // Minumum Font Size (Pixels)
     public final static int FONT_SIZE_MAX = 180;       // Maximum Font Size (Pixels)
-
+    private static final int CHAR_LF = '\n'-CHAR_START;
+    private static final float SCALE_F = 0.1f;
 
     //--Members--//
-    AssetManager assets;                               // Asset Manager
+    //AssetManager assets;                               // Asset Manager
 
     int fontPadX, fontPadY;                            // Font Padding (Pixels; On Each Side, ie. Doubled on Both X+Y Axis)
 
@@ -51,15 +60,12 @@ class GLTextDrawer {
     int rowCnt, colCnt;                                // Number of Rows/Columns
 
     float scaleX, scaleY;                              // Font Scale (X,Y Axis)
-    float spaceX;                                      // Additional (X,Y Axis) Spacing (Unscaled)
+    float spaceY, spaceX;                              // Additional (X,Y Axis) Spacing (Unscaled)
 
 
     //--Constructor--//
     // D: save GL instance + asset manager, create arrays, and initialize the members
-    // A: gl - OpenGL ES 10 Instance
-    GLTextDrawer(AssetManager assets) {
-        this.assets = assets;                           // Save the Asset Manager Instance
-
+    private GLTextDrawer() {
         charWidths = new float[CHAR_CNT];               // Create the Array of Character Widths
         charRgn = new TextureRegion[CHAR_CNT];          // Create the Array of Character Regions
 
@@ -81,10 +87,26 @@ class GLTextDrawer {
         rowCnt = 0;
         colCnt = 0;
 
-        scaleX = 1.0f;                                  // Default Scale = 1 (Unscaled)
-        scaleY = 1.0f;                                  // Default Scale = 1 (Unscaled)
+        scaleX = SCALE_F;                                  // Default Scale = .1 (Unscaled)
+        scaleY = SCALE_F;                                  // Default Scale = .1 (Unscaled)
         spaceX = 0.0f;
+        spaceY = 0.0f;
+        isLoaded = false;
     }
+
+
+    public static GLTextDrawer loadText(AssetManager assets){
+        if(instance.isLoaded){
+            return instance;
+        }else{
+            if(instance.load(assets,FONT_DEFAULT,SIZE_DEFAULT,0,0)){
+                return instance;
+            }else{
+                return null;
+            }
+        }
+    }
+
 
     //--Load Font--//
     // description
@@ -94,7 +116,7 @@ class GLTextDrawer {
     //    file - Filename of the font (.ttf, .otf) to use. In 'Assets' folder.
     //    size - Requested pixel size of font (height)
     //    padX, padY - Extra padding per character (X+Y Axis); to prevent overlapping characters.
-    boolean load(String file, int size, int padX, int padY) {
+    private boolean load(AssetManager assets, String file, int size, int padX, int padY) {
 
         // setup requested values
         fontPadX = padX;                                // Set Requested X Axis Padding
@@ -182,31 +204,6 @@ class GLTextDrawer {
         s[0] = CHAR_NONE;                               // Set Character to Use for NONE
         canvas.drawText( s, 0, 1, x, y, paint );        // Draw Character
 
-        /*
-        FileOutputStream out=null;
-        try {
-            File path = AppInstance.getInstance().getContext().getFilesDir();
-            File f = new File(path, "bitmap"+System.currentTimeMillis()%10+".png");
-            out = new FileOutputStream(f);
-            if(bitmap.compress(Bitmap.CompressFormat.PNG, 10, out)) { // bmp is your Bitmap instance
-                // PNG is a lossless format, the compression factor (100) is ignored
-                Log.d("GLTextDrawer", "Textura guardada, ");
-            }else {
-                Log.d("GLTextDrawer", "Textura NO guardada, ");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.flush();
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
-
         texture = new Textura(bitmap);
         // release the bitmap
         bitmap.recycle();                               // Release the Bitmap
@@ -227,7 +224,8 @@ class GLTextDrawer {
         textureRgn = new TextureRegion( textureSize, textureSize, 0, 0, textureSize, textureSize );  // Create Full Texture Region
 
         // return success
-        return true;                                    // Return Success
+        isLoaded =  true;                                    // Return Success
+        return true;
     }
 
 
@@ -240,19 +238,27 @@ class GLTextDrawer {
     public void draw(GLText glText, String text){
         draw(glText, text,0,0);
     }
-    public void draw(GLText glText, String text, float x, float y)  {
+    public void draw(GLText glText, String text, float startX, float startY)  {
         float chrHeight = cellHeight * scaleY;          // Calculate Scaled Character Height
-        float chrWidth = cellWidth * scaleX;            // Calculate Scaled Character Width
+
         int len = text.length();                        // Get String Length
-        if(len>glText.getMaxLength()) len=glText.getMaxLength();//CHECK MAX!
+        float x = startX;
+        float y = startY-chrHeight-spaceY;
+
         float[] fVertexData = new float[len*6*8];
         //x += ( chrWidth / 2.0f ) - ( fontPadX * scaleX );  // Adjust Start X
         //y += ( chrHeight / 2.0f ) - ( fontPadY * scaleY );  // Adjust Start Y
         for ( int i = 0; i < len; i++ )  {              // FOR Each Character in String
             int c = (int)text.charAt( i ) - CHAR_START;  // Calculate Character Index (Offset by First Char in Font)
-            if ( c < 0 || c >= CHAR_CNT )                // IF Character Not In Font
+            if ( c < 0 || c >= CHAR_CNT ){// IF Character Not In Font
+                if(c==CHAR_LF){
+                    x=startX-( charWidths[CHAR_UNKNOWN] + spaceX ) * scaleX;//x=start-1 letra(porque dibujamos UNKNOWN))
+                    y-= chrHeight+spaceY;
+                }
                 c = CHAR_UNKNOWN;                         // Set to Unknown Character Index
-            drawLetterHelper(fVertexData,i*6*8,x,y,charWidths[c],chrHeight,charRgn[c]);
+            }
+
+            drawLetterHelper(fVertexData,i*6*8,x,y,charWidths[c]*scaleX,chrHeight,charRgn[c]);
             x += ( charWidths[c] + spaceX ) * scaleX;    // Advance X Position by Scaled Character Width
         }
         glText.editText(fVertexData,len,texture);
@@ -323,11 +329,11 @@ class GLTextDrawer {
     //    sx, sy - separate x and y axis scaling factors
     // R: [none]
     public void setScale(float scale)  {
-        scaleX = scaleY = scale;                        // Set Uniform Scale
+        scaleX = scaleY = scale*SCALE_F;                        // Set Uniform Scale
     }
     public void setScale(float sx, float sy)  {
-        scaleX = sx;                                    // Set X Scale
-        scaleY = sy;                                    // Set Y Scale
+        scaleX = sx*SCALE_F;                                    // Set X Scale
+        scaleY = sy*SCALE_F;                                    // Set Y Scale
     }
 
     //--Get Scale--//
@@ -335,10 +341,10 @@ class GLTextDrawer {
     // A: [none]
     // R: the x/y scale currently used for scale
     public float getScaleX()  {
-        return scaleX;                                  // Return X Scale
+        return scaleX/SCALE_F;                                  // Return X Scale
     }
     public float getScaleY()  {
-        return scaleY;                                  // Return Y Scale
+        return scaleY/SCALE_F;                                  // Return Y Scale
     }
 
     //--Set Space--//
@@ -363,13 +369,38 @@ class GLTextDrawer {
     // R: the length of the specified string (pixels)
     public float getLength(String text) {
         float len = 0.0f;                               // Working Length
+        float maxLen = 0.0f;                               // Working Length
         int strLen = text.length();                     // Get String Length (Characters)
         for ( int i = 0; i < strLen; i++ )  {           // For Each Character in String (Except Last
             int c = (int)text.charAt( i ) - CHAR_START;  // Calculate Character Index (Offset by First Char in Font)
-            len += ( charWidths[c] * scaleX );           // Add Scaled Character Width to Total Length
+            if ( c < 0 || c >= CHAR_CNT ){// IF Character Not In Font
+                if(c==CHAR_LF){
+                    if(len>maxLen) {
+                        maxLen = len;
+                    }
+                    len = 0f;
+                }
+            }else {
+                len += (charWidths[c] * scaleX);           // Add Scaled Character Width to Total Length
+            }
         }
-        len += ( strLen > 1 ? ( ( strLen - 1 ) * spaceX ) * scaleX : 0 );  // Add Space Length
-        return len;                                     // Return Total Length
+        if(len>maxLen) {
+            maxLen = len;
+        }
+        maxLen += ( strLen > 1 ? ( ( strLen - 1 ) * spaceX ) * scaleX : 0 );  // Add Space Length
+        return maxLen;                                     // Return Total Length
+    }
+
+    public float getHeight(String text){
+        float charHeight = getCharHeight();
+        float len = charHeight;
+        int strLen = text.length();                     // Get String Length (Characters)
+        for ( int i = 0; i < strLen; i++ ) {
+            if(text.charAt(i)=='\n'){
+                len+= charHeight+spaceY;
+            }
+        }
+        return  len;
     }
 
     //--Get Width/Height of Character--//
@@ -399,9 +430,9 @@ class GLTextDrawer {
     public float getDescent()  {
         return ( fontDescent * scaleY );                // Return Font Descent
     }
-    public float getHeight()  {
+    /*public float getHeight()  {
         return ( fontHeight * scaleY );                 // Return Font Height (Actual)
-    }
+    }*/
 
 
     //--Draw Font Texture--//

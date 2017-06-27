@@ -28,9 +28,6 @@ public abstract class VboClient extends Figura {
     protected float[] color = {1f, 1f, 1f, 1f};
 
 
-    protected transient boolean isLoaded=false;
-
-
     public VboClient(FigureType type){
         super(type);
 
@@ -38,6 +35,7 @@ public abstract class VboClient extends Figura {
 
 
     public void dibujar(Shader shader, float[] modelViewMatrix){
+        if(numVertices<1) return;
         //Configuramos vertices
         vertexBuffer.position(0);//posicion inicial del primer vertice
         GLES20.glEnableVertexAttribArray(shader.getmCoordHandle());

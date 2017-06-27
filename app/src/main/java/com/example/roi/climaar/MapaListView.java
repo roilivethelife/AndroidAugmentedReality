@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -69,10 +68,10 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
     }
 
     public boolean deleteSelectedItem(){
-        if(mItemAdapter.seleccionado==-1 || mItemAdapter.seleccionado>=mItemAdapter.mapas.size()){
+        if(mItemAdapter.seleccionado==-1 || mItemAdapter.seleccionado>=Modelo.getInstance().getMapasSize()){
             return false;
         }else{
-            mItemAdapter.mapas.remove(mItemAdapter.seleccionado);
+            Modelo.getInstance().deleteMapa(mItemAdapter.seleccionado);
             mItemAdapter.seleccionado = -1;
             mItemAdapter.notifyDataSetChanged();
             buttonEdit.setEnabled(false);
@@ -88,7 +87,7 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
 
     public Mapa getMapaSeleccionado(){
         if(mItemAdapter.seleccionado==-1) return null;
-        return mItemAdapter.mapas.get(mItemAdapter.seleccionado);
+        return Modelo.getInstance().getMapa(mItemAdapter.seleccionado);
     }
 
 
@@ -146,22 +145,20 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
 
     private class ItemAdapter extends BaseAdapter {
         Context context;
-        ArrayList<Mapa> mapas;
         int seleccionado = -1;
 
         ItemAdapter(Context context){
             this.context = context;
-            mapas = Modelo.getInstance().getMapas();
         }
 
         @Override
         public int getCount() {
-            return mapas.size();
+            return Modelo.getInstance().getMapasSize();
         }
 
         @Override
         public Object getItem(int i) {
-            return mapas.get(i);
+            return Modelo.getInstance().getMapa(i);
         }
 
         @Override
@@ -177,21 +174,21 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
                 // Create a new view into the list.
                 LayoutInflater inflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = inflater.inflate(R.layout.list_item_mapa, parent, false);
+                rowView = inflater.inflate(R.layout.list_item_name_desc, parent, false);
             }
 
             // Set data into the view.
             TextView tvNombre = (TextView) rowView.findViewById(R.id.textViewNombre);
             TextView tvDescripcion = (TextView) rowView.findViewById(R.id.textViewDescripcion);
 
-            Mapa map = mapas.get(i);
+            Mapa map = Modelo.getInstance().getMapa(i);
             tvNombre.setText(map.getNombre());
             tvDescripcion.setText(map.getDescripcion());
             //Log.d("REDRAW","I="+i+"   Seleccionado="+seleccionado);
             if(i==seleccionado){
                 rowView.setBackgroundResource(R.color.colorPrimaryLight);
             }else {
-                rowView.setBackgroundColor(Color.parseColor("#FFFFFF"));//grisaceo
+                rowView.setBackgroundColor(Color.parseColor("#FAFAFA"));//grisaceo
             }
 
             return rowView;

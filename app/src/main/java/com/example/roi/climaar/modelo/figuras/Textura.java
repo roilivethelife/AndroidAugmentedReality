@@ -18,7 +18,6 @@ public class Textura {
     private int textureHandle;
 
     private Textura(){
-        this.resourceId =resourceId;
         textureHandle = 0;
     }
 

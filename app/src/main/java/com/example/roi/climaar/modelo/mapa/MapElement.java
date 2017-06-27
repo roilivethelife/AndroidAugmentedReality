@@ -1,5 +1,6 @@
 package com.example.roi.climaar.modelo.mapa;
 
+import com.example.roi.climaar.modelo.JsonRest.DynamicMapElement;
 import com.example.roi.climaar.modelo.figuras.Figura;
 import com.example.roi.climaar.vista.Shader;
 
@@ -44,11 +45,47 @@ public class MapElement implements Serializable{
         }
     }
 
+    private boolean isFiguraNull(){
+        return figura==null;
+    }
+
+    public void setFigura(Figura figura) {
+        this.figura = figura;
+    }
+
     public String getName() {
         return name;
     }
 
     public boolean isDynamic() {
         return figura.isDynamic();
+    }
+
+    public DynamicMapElement getDynamicFigura(){
+        if(figura instanceof DynamicMapElement){
+            return (DynamicMapElement)figura;
+        }else{
+            return null;
+        }
+    }
+
+    public String getFigureType(){
+        if(figura==null) return "Desconocido";
+        switch (figura.getType()){
+            case OBJ:
+                return "OBJ 3D";
+            case SUELO_RADIANTE:
+                return "Suelo radiante";
+            case VENTILADOR:
+                return "Ventilador";
+            case TEXT:
+                return "Texto";
+            default:
+                return "Otro";
+        }
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

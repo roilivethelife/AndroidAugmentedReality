@@ -11,10 +11,10 @@ import java.io.Serializable;
  */
 
 public abstract class Figura implements Serializable{
-    boolean isDynamic;
+    protected boolean isDynamic;
 
     public enum FigureType {
-        OBJ, SUELO_RADIANTE, VENTILADOR, TEXT
+        OBJ, SUELO_RADIANTE, VENTILADOR, TEXT, RECTANGLE
     }
 
     private FigureType type;

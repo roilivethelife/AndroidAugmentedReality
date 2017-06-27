@@ -31,6 +31,7 @@ public class WebRestData implements WebRestDataInterface{
     private boolean bSRvalvulaAbierta; //CITIUS_SR_P2_Actuadores_209
     private float fSRtempConsignaFrio; //CITIUS_SR_P2_Consigna_Frio_209
     private float fSRtempConsignaCalor; //CITIUS_SR_P2_Consigna_Calor_209
+    private float fTempInterior; //CITIUS_SR_P2_Temp_209
 
 
     //Variables URL general suelo radiante
@@ -72,13 +73,13 @@ public class WebRestData implements WebRestDataInterface{
         //de DynamicMapElement, y agregarlos a la lista
         for (MapElement mE :mapElements) {
             if(mE.isDynamic()){
-                DynamicMapElement dynMapElement = null;
-                if(mE instanceof DynamicMapElement){
-                    dynMapElement = (DynamicMapElement) mE;
+                DynamicMapElement dynMapElement = mE.getDynamicFigura();
+                if(dynMapElement!=null){
                     dynMapElements.add(dynMapElement);
                 }
             }
         }
+        Log.d(LOGTAG,"Dynamic elements="+mapElements.size());
         mHandler = new Handler();
         createRunnable();
         initVars();
@@ -94,6 +95,7 @@ public class WebRestData implements WebRestDataInterface{
         fACtempExterior=NaN;
         fACtempImpulsion=NaN;
         fACtempRetorno=NaN;
+        fTempInterior=NaN;
     }
 
 
@@ -186,6 +188,10 @@ public class WebRestData implements WebRestDataInterface{
         return fACtempRetorno;
     }
 
+    public float getfTempInterior() {
+        return fTempInterior;
+    }
+
     public class LoadDataTask extends AsyncTask<Void,Void, Void> {
 
         @Override
@@ -205,7 +211,10 @@ public class WebRestData implements WebRestDataInterface{
                         fSRtempConsignaFrio = (float)observation.optDouble("value");
                     }else if(deviceName.equals("CITIUS_SR_P2_Consigna_Calor_"+numDespacho)){
                         fSRtempConsignaCalor = (float)observation.optDouble("value");
+                    }else if(deviceName.equals("CITIUS_SR_P2_Temp_"+numDespacho)){
+                        fTempInterior = (float)observation.optDouble("value");
                     }
+
                 }
 
                 jsonStr =  HttpRequest.get(URL_SUELO_RADIANTE_GENERAL).

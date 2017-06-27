@@ -29,7 +29,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainMenuActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -40,8 +41,10 @@
             android:name=".vista.ARActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
-        <activity android:name=".EditMapActivity2">
-        </activity>
+        <activity android:name=".menus.editmap.EditMapActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".menus.editmap.EditElementoActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

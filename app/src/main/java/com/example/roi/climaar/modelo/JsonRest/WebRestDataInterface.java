@@ -14,4 +14,5 @@ public interface WebRestDataInterface {
     float getfACtempExterior();
     float getfACtempImpulsion();
     float getfACtempRetorno();
+    float getfTempInterior();
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.example.roi.climaar.modelo.figuras.Rectangulo;
 import com.example.roi.climaar.vista.Shader;
 import com.example.roi.climaar.modelo.figuras.Textura;
 import com.example.roi.climaar.modelo.figuras.VboClient;
@@ -18,77 +19,96 @@ import java.nio.ByteOrder;
 public class GLText extends VboClient {
 
     private String text;
-    private String fuenteTTF;
-    private int size;
-    private int padX, padY;
-    private float scaleX, scaleY, posX, posY;
-
-
-    private static final String FONT_DEFAULT = "Roboto-Regular.ttf";
-    private static final int SIZE_DEFAULT = 20;
+    private float posX, posY;
 
 
     private int numChars;
-    private int maxLength;
 
-    public GLText(String texto){
-        this(texto,FONT_DEFAULT,SIZE_DEFAULT);
+    private boolean drawBackground;
+    private static final float BORDE_BACKGROUND = 1f;
+    private Rectangulo background;
+
+    private transient GLTextDrawer glTextDrawer;
+
+    public GLText(String text) {
+        this(text,0,0);
     }
 
-    public GLText( String text, String fuenteTTF, int size) {
-        this(text,0,0,fuenteTTF,size);
+
+    public GLText( String text, int posX, int posY){
+        this(text,posX,posY,false);
     }
 
-    public GLText( String text, int posX, int posY, int size){
-        this(text,posX,posY,FONT_DEFAULT,size);
-    }
-
-    public GLText( String text, int posX, int posY, String fuenteTTF, int size){
+    public GLText( String text, int posX, int posY, boolean drawBackground){
         super(FigureType.TEXT);
         this.text = text;
-        this.fuenteTTF = fuenteTTF;
-        this.size = size;
-        this.padX=0;
-        this.padY=0;
-        this.scaleX=0;
-        this.scaleY=0;
         this.posX=posX;
         this.posY=posY;
-        this.maxLength = text.length();
+        this.drawBackground = drawBackground;
     }
 
     @Override
     public void loadFigura(Context context) {
-        ByteBuffer bb = ByteBuffer.allocateDirect(maxLength*6*8*4);//numChars*6vertexperChar*8floatperVertex*4bytesperfloat
-        bb.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
-        vertexBuffer = bb.asFloatBuffer();
-        numChars = 0;
-        numVertices = 0;
+        updateAtributes();
         color[0]=1f;
         color[1]=0f;
         color[2]=0f;
         color[3]=1f;
 
-        GLTextDrawer glTextDrawer = new GLTextDrawer(context.getAssets());
-        glTextDrawer.load(fuenteTTF,size,padX,padY);
-        glTextDrawer.setScale(scaleX,scaleY);
-        glTextDrawer.drawC(this,text,posX,posY);
+        glTextDrawer = GLTextDrawer.loadText(context.getAssets());
+        glTextDrawer.draw(this,text,posX,posY);
+
+        if(drawBackground){
+            background = new Rectangulo(
+                    posX-BORDE_BACKGROUND,
+                    posY+BORDE_BACKGROUND,
+                    -1f,
+                    glTextDrawer.getLength(text)+BORDE_BACKGROUND,
+                    -glTextDrawer.getHeight(text)-BORDE_BACKGROUND);
+            background.loadFigura(context);
+        }
         isLoaded = true;
+    }
+
+    private void updateAtributes() {
+        if(vertexBuffer!=null) {
+            vertexBuffer.clear();
+        }
+        ByteBuffer bb = ByteBuffer.allocateDirect(text.length()*6*8*4);//numChars*6vertexperChar*8floatperVertex*4bytesperfloat
+        bb.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
+        vertexBuffer = bb.asFloatBuffer();
+        numChars = 0;
+        numVertices = 0;
     }
 
     @Override
     public void dibujar(Shader shader, float[] modelViewMatrix) {
+        if(drawBackground && background!=null){
+            background.dibujar(shader, modelViewMatrix);
+        }
         GLES20.glEnable( GLES20.GL_BLEND );
         GLES20.glBlendFunc( GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA );
         super.dibujar(shader, modelViewMatrix);
         GLES20.glDisable( GLES20.GL_BLEND );
+
+
+    }
+
+    public void newText(String text){
+        Log.d("GLText","NewText="+text);
+        this.text = text;
+        updateAtributes();
+        background.setHeight(-glTextDrawer.getHeight(text)-BORDE_BACKGROUND);
+        background.setWidth(glTextDrawer.getLength(text)+BORDE_BACKGROUND);
+        background.updateAtributes();
+        glTextDrawer.draw(this,text,posX,posY);
     }
 
 
     public void editText(float[] vertexData, int numChars, Textura textura){
-        if(numChars>maxLength){
+        /*if(numChars>maxLength){
             Log.e("GLText", "Cadena de mayor tamaño");
-        }
+        }*/
         this.textura = textura;
         vertexBuffer.clear();
         vertexBuffer.put(vertexData);
@@ -97,53 +117,6 @@ public class GLText extends VboClient {
         numVertices = numChars*6;
     }
 
-    public String getFuenteTTF() {
-        return fuenteTTF;
-    }
-
-    public void setFuenteTTF(String fuenteTTF) {
-        this.fuenteTTF = fuenteTTF;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public int getPadX() {
-        return padX;
-    }
-
-    public void setPadX(int padX) {
-        this.padX = padX;
-    }
-
-    public int getPadY() {
-        return padY;
-    }
-
-    public void setPadY(int padY) {
-        this.padY = padY;
-    }
-
-    public float getScaleX() {
-        return scaleX;
-    }
-
-    public void setScaleX(float scaleX) {
-        this.scaleX = scaleX;
-    }
-
-    public float getScaleY() {
-        return scaleY;
-    }
-
-    public void setScaleY(float scaleY) {
-        this.scaleY = scaleY;
-    }
 
     public float getPosX() {
         return posX;
@@ -165,11 +138,15 @@ public class GLText extends VboClient {
         return numChars;
     }
 
-    public int getMaxLength() {
-        return maxLength;
+    public void setDrawBackground(boolean drawBackground) {
+        this.drawBackground = drawBackground;
     }
 
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
+    public float getCharHeight() {
+        return glTextDrawer.getCharHeight();
+    }
+
+    public float getTextHeight(){
+        return glTextDrawer.getHeight(text);
     }
 }

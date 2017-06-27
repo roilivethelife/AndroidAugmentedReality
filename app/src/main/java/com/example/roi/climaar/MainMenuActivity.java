@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.roi.climaar.menus.editmap.EditMapActivity;
 import com.example.roi.climaar.modelo.Modelo;
 import com.example.roi.climaar.modelo.mapa.Mapa;
 import com.example.roi.climaar.vista.ARActivity;
@@ -62,6 +63,9 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
         mapaListView.setListener(this);
         textViewUbicacionSeleccionada = (TextView) findViewById(R.id.textViewUbicacionSeleccionada);
         crearDialogAyuda();
+
+        if(Modelo.getInstance().getMapasSize()==0)
+            Modelo.getInstance().addMapa(Modelo.getInstance().createLoadDefaultMap());
     }
 
     private void crearDialogAyuda() {
@@ -78,6 +82,7 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
         Modelo.getInstance().setContext(this);
         //comprueba que permisos están activos y pide al usuario
         comprobarPedirPermisos();
+        mapaListView.notifyNewData();
     }
 
     @Override
@@ -249,14 +254,15 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onAddNewMapPushed() {
-        Intent intent = new Intent(this, EditMapActivity2.class);
+        Intent intent = new Intent(this, EditMapActivity.class);
+        Modelo.getInstance().setMapaOriginal(null);
         startActivity(intent);
     }
 
     @Override
     public void onEditMapPushed(Mapa mapaSeleccionado) {
-        Intent intent = new Intent(this, EditMapActivity2.class);
-        intent.putExtra("MAPA",mapaSeleccionado);
+        Intent intent = new Intent(this, EditMapActivity.class);
+        Modelo.getInstance().setMapaOriginal(mapaSeleccionado);
         startActivity(intent);
     }
 
