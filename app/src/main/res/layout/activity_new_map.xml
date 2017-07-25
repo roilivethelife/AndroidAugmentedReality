@@ -8,7 +8,7 @@
     android:divider="?android:dividerHorizontal"
     android:orientation="vertical"
     android:showDividers="middle"
-    tools:context="com.example.roi.climaar.menus.editmap.EditMapActivity">
+    tools:context="com.example.roi.climaar.menus.editdespacho.EditDespachoActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_new_map"
@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="8dp"
                     android:paddingTop="16dp"
-                    android:text="Propiedades mapa"
+                    android:text="Propiedades despacho"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/colorAccent"
                     android:textSize="18sp" />
@@ -52,23 +52,24 @@
                     android:background="@android:color/darker_gray" />
             </LinearLayout>
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeNombre"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/despachoAttributeNombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                roi:title="Nombre mapa" />
+                roi:title="Nombre despacho" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeDesc"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/despachoAttributeDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Descripción" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeNumHabita"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/despachoAttributeNumDespacho"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Nº de habitación" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,8 +82,10 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="8dp"
                     android:paddingTop="16dp"
-                    android:text="Tamaño de la sala"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                    android:text="Tamaño del despacho"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="18sp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -90,20 +93,20 @@
                     android:background="@android:color/darker_gray" />
             </LinearLayout>
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeTamX"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/despachoAttributeTamX"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Ancho" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeTamY"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/despachoAttributeTamY"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Altura" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeTamZ"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/despachoAttributeTamZ"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Longitud" />
@@ -130,20 +133,20 @@
                     android:background="@android:color/darker_gray" />
             </LinearLayout>
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeMarkerX"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/despachoAttributeMarkerX"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Posición eje X" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeMarkerY"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/depachoAttributeMarkerY"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Posición eje Y" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
-                android:id="@+id/mapaAttributeMarkerZ"
+            <com.example.roi.climaar.menus.AttributeListItem
+                android:id="@+id/depachoAttributeMarkerZ"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Posición eje Z" />
@@ -170,8 +173,8 @@
                     android:background="@android:color/darker_gray" />
             </LinearLayout>
 
-            <com.example.roi.climaar.menus.editmap.ElementosListView
-                android:id="@+id/mapaAttributeConfigElementosView"
+            <com.example.roi.climaar.menus.editdespacho.ElementosListView
+                android:id="@+id/despachoAttributeConfigElementosView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             </LinearLayout>

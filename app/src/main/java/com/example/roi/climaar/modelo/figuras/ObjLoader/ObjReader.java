@@ -4,7 +4,6 @@ package com.example.roi.climaar.modelo.figuras.ObjLoader;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.roi.climaar.old.AppInstance;
 import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.figuras.Textura;
 

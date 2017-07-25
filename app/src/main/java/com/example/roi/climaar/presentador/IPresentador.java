@@ -20,12 +20,6 @@ public interface IPresentador {
 
 
     /**
-     * @param elemento elemento
-     * @param visible visibilidad
-     */
-    void btnSetVisibleElemento(int elemento, boolean visible);
-
-    /**
      * Actualiza el estado de vuforia para calcular la posicion correcta
      * Devuelve la matriz con la posicion lista para dibujar
      *
@@ -34,13 +28,6 @@ public interface IPresentador {
      */
     float[] updateVuforiaState(State state);
 
-
-    /**
-     * Metodo llamado cuando ha habido un toque en pantalla
-     * @param x posicion toque eje X
-     * @param y posicion toque eje Y
-     */
-    void touchEvent(float x, float y);
 
 
     void onCreate();

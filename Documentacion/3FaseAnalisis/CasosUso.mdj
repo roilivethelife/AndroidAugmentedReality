@@ -8747,7 +8747,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+addQueueMapElement(mapElement: MapElement)",
+											"text": "+addQueueMapElement(despachoElement: MapElement)",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -8776,7 +8776,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+delQueueMapElement(mapElement: MapElement)",
+											"text": "+delQueueMapElement(despachoElement: MapElement)",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -9446,7 +9446,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "-mapElements: mapElemensList",
+											"text": "-despachoElements: mapElemensList",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -18919,7 +18919,7 @@
 											"_parent": {
 												"$ref": "AAAAAAFcjbpjRmAYKyM="
 											},
-											"name": "mapElements",
+											"name": "despachoElements",
 											"visibility": "private",
 											"isStatic": false,
 											"isLeaf": false,
@@ -19157,7 +19157,7 @@
 													"_parent": {
 														"$ref": "AAAAAAFcjbSQHV/6G1g="
 													},
-													"name": "mapElement",
+													"name": "despachoElement",
 													"visibility": "public",
 													"isStatic": false,
 													"isLeaf": false,
@@ -19189,7 +19189,7 @@
 													"_parent": {
 														"$ref": "AAAAAAFcjbXULWAGSdc="
 													},
-													"name": "mapElement",
+													"name": "despachoElement",
 													"visibility": "public",
 													"isStatic": false,
 													"isLeaf": false,
@@ -21112,7 +21112,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFckrJ9UmcdcX8="
 									},
-									"name": "mapa",
+									"name": "despacho",
 									"ownedElements": [
 										{
 											"_type": "UMLClass",
@@ -24159,7 +24159,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+addQueueMapElement(mapElement: MapElement)",
+											"text": "+addQueueMapElement(despachoElement: MapElement)",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -24188,7 +24188,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+delQueueMapElement(mapElement: MapElement)",
+											"text": "+delQueueMapElement(despachoElement: MapElement)",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -28326,7 +28326,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "(from mapa)",
+											"text": "(from despacho)",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -33474,7 +33474,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "(from mapa)",
+											"text": "(from despacho)",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -36245,7 +36245,7 @@
 													},
 													"edgePosition": 1,
 													"underline": false,
-													"text": "3 : mapa",
+													"text": "3 : despacho",
 													"horizontalAlignment": 2,
 													"verticalAlignment": 5,
 													"wordWrap": false
@@ -38734,7 +38734,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFcl+P56IaKeHI="
 									},
-									"name": "mapa",
+									"name": "despacho",
 									"source": {
 										"$ref": "AAAAAAFcl+QvXYbJWio="
 									},

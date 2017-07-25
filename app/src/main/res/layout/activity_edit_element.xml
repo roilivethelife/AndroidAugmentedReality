@@ -8,7 +8,7 @@
     android:divider="?android:dividerHorizontal"
     android:orientation="vertical"
     android:showDividers="middle"
-    tools:context="com.example.roi.climaar.menus.editmap.EditMapActivity">
+    tools:context="com.example.roi.climaar.menus.editdespacho.EditDespachoActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_new_map"
@@ -53,19 +53,19 @@
                     android:background="@android:color/darker_gray" />
             </LinearLayout>
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
+            <com.example.roi.climaar.menus.AttributeListItem
                 android:id="@+id/elementoAttributeName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Nombre elemento" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
+            <com.example.roi.climaar.menus.AttributeListItem
                 android:id="@+id/elementoAttributeType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Tipo de elemento" />
 
-            <LinearLayout
+           <!-- <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -90,23 +90,25 @@
                     android:background="@android:color/darker_gray" />
             </LinearLayout>
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
+            <com.example.roi.climaar.menus.AttributeListItem
                 android:id="@+id/elementoAttributeTamX"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Ancho" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
+            <com.example.roi.climaar.menus.AttributeListItem
                 android:id="@+id/elementoAttributeTamY"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Altura" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
+            <com.example.roi.climaar.menus.AttributeListItem
                 android:id="@+id/elementoAttributeTamZ"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Longitud" />
+
+                -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -130,19 +132,19 @@
                     android:background="@android:color/darker_gray" />
             </LinearLayout>
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
+            <com.example.roi.climaar.menus.AttributeListItem
                 android:id="@+id/elementoAttributePosX"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Posición eje X" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
+            <com.example.roi.climaar.menus.AttributeListItem
                 android:id="@+id/elementoAttributePosY"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 roi:title="Posición eje Y" />
 
-            <com.example.roi.climaar.menus.editmap.AttributeListItem
+            <com.example.roi.climaar.menus.AttributeListItem
                 android:id="@+id/elementoAttributePosZ"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

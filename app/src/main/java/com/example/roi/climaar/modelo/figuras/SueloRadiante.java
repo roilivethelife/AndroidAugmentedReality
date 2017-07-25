@@ -7,10 +7,10 @@ import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.JsonRest.DynamicMapElement;
 import com.example.roi.climaar.modelo.JsonRest.WebRestDataInterface;
 import com.example.roi.climaar.modelo.figuras.Texto.GLText;
-import com.example.roi.climaar.modelo.mapa.MapElement;
 import com.example.roi.climaar.vista.Shader;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import static java.lang.Float.NaN;
 
@@ -28,11 +28,11 @@ public class SueloRadiante extends Figura implements Serializable, DynamicMapEle
 
     private static final float[] COLOR_BLUE = {0.2f, 0.4f, 1f, 1f};
     private static final float[] COLOR_RED = {1f, 0.07f, 0f, 1f};
-    private boolean colorRed = false;
+    private static final float[] COLOR_GREY = {1f, 0.7f, 0.7f, 0.7f};
 
     private static final float ANCHO_PIPE = 5.0f;
     private static final float LARGO_PIPE = 5.0f;
-    private static final float SEP_TUBERIAS = 30f;
+    private static final float SEP_TUBERIAS = 40f;
 
 
     private float ancho;
@@ -44,8 +44,9 @@ public class SueloRadiante extends Figura implements Serializable, DynamicMapEle
     private static int resourceIDvalvPipe = R.raw.valvulapipe;
     private static int resourceIDvalv = R.raw.valvula;
 
-    private static final String VALVULA_CERRADA = "VALVULA\nCERRADA";
-    private static final String VALVULA_ABIERTA = "VALVULA\nABIERTA";
+    private static final String VALVULA_CERRADA = "Valvula Suelo Radiante: CERRADA";
+    private static final String VALVULA_ABIERTA = "Valvula Suelo Radiante: ABIERTA";
+    private static final float ANCHO_CARTEL = 30f;//15cm
 
     //VariablesWebRest
     private boolean bSRvalvulaAbierta; //CITIUS_SR_P2_Actuadores_209
@@ -66,21 +67,24 @@ public class SueloRadiante extends Figura implements Serializable, DynamicMapEle
         fSRtempRetorno=NaN;
     }
 
-
-    public void setColorRed(boolean red) {
-        colorRed = red;
-    }
-
     @Override
     public void loadFigura(Context context) {
         pipe = new Obj(resourceIDpipe);
         valvula = new Obj(resourceIDvalv);
         valvulaPipe = new Obj(resourceIDvalvPipe);
         glText = new GLText(VALVULA_CERRADA,0,0,true);
+
+
+        glText.setCentered(true);
+
         pipe.loadFigura(context);
+        pipe.color = COLOR_GREY;
+
         valvula.loadFigura(context);
         valvulaPipe.loadFigura(context);
         glText.loadFigura(context);
+        glText.setScale(ANCHO_CARTEL/glText.getTextLength());
+
         posXValvula = (float)Math.floor(ancho/SEP_TUBERIAS/2) * SEP_TUBERIAS - SEP_TUBERIAS/1.5f;
         isLoaded = true;
     }
@@ -89,13 +93,6 @@ public class SueloRadiante extends Figura implements Serializable, DynamicMapEle
     public void dibujar(Shader shader, float[] modelViewMatrix) {
         float[] modelViewTemp = new float[16];
 
-
-        //Configuramos color
-        if (colorRed) {
-            pipe.color = COLOR_RED;
-        } else {
-            pipe.color = COLOR_BLUE;
-        }
 
         //Dibujar valvula
         Matrix.translateM(modelViewTemp, 0, modelViewMatrix, 0, posXValvula, 0, 0);
@@ -154,15 +151,26 @@ public class SueloRadiante extends Figura implements Serializable, DynamicMapEle
         bSRmodoFrio = dataInterface.isbSRmodoFrio();
         fSRtempRetorno = dataInterface.getfSRtempRetorno();
         fSRtempImpulsion = dataInterface.getfSRtempImpulsion();
-
         boolean newValvAbierta = dataInterface.isbSRvalvulaAbierta();
         if (bSRvalvulaAbierta != newValvAbierta) {
             bSRvalvulaAbierta = newValvAbierta;
             if (bSRvalvulaAbierta) {
-                glText.newText(VALVULA_ABIERTA + "\n" + fSRtempImpulsion);
+                if(bSRmodoFrio==true){
+                    pipe.color = COLOR_BLUE;
+                }else{
+                    pipe.color = COLOR_RED;
+                }
+                glText.newText(String.format(Locale.ENGLISH,"%s\nTemp.agua: %.1fC",VALVULA_ABIERTA,fSRtempImpulsion));
             } else {
-                glText.newText(VALVULA_CERRADA + "\n" + fSRtempImpulsion);
+                pipe.color = COLOR_GREY;
+                glText.newText(String.format(Locale.ENGLISH,"%s\nTemp.agua: %.1fC",VALVULA_CERRADA,fSRtempImpulsion));
             }
+            glText.setScale(ANCHO_CARTEL/glText.getTextLength());
         }
+    }
+
+    public void setDimensions(float ancho, float largo) {
+        this.ancho = ancho;
+        this.largo = largo;
     }
 }

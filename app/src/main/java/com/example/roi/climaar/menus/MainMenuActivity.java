@@ -1,4 +1,4 @@
-package com.example.roi.climaar;
+package com.example.roi.climaar.menus;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -18,21 +18,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.roi.climaar.menus.editmap.EditMapActivity;
+import com.example.roi.climaar.R;
+import com.example.roi.climaar.menus.editdespacho.EditDespachoActivity;
 import com.example.roi.climaar.modelo.Modelo;
-import com.example.roi.climaar.modelo.mapa.Mapa;
+import com.example.roi.climaar.modelo.despacho.Despacho;
 import com.example.roi.climaar.vista.ARActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainMenuActivity extends AppCompatActivity implements View.OnClickListener, MapaListView.MapaListViewInterface{
+public class MainMenuActivity extends AppCompatActivity implements View.OnClickListener, DespachosListView.DespachosListViewInterface {
     private static final String LOGTAG = "MainMenuActivity";
 
-    private MapaListView mapaListView;
+    private DespachosListView despachosListView;
     private TextView textViewUbicacionSeleccionada;
     private AlertDialog dialogAyuda;
-    private Mapa mapaSeleccionado;
+    private Despacho despachoSeleccionado;
     private Button buttonMainIniciarAR;
 
 
@@ -59,8 +60,8 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
 
         buttonMainIniciarAR = (Button) findViewById(R.id.buttonMainIniciarAR);
         buttonMainIniciarAR.setOnClickListener(this);
-        mapaListView = (MapaListView)findViewById(R.id.mapa_list_view);
-        mapaListView.setListener(this);
+        despachosListView = (DespachosListView)findViewById(R.id.mapa_list_view);
+        despachosListView.setListener(this);
         textViewUbicacionSeleccionada = (TextView) findViewById(R.id.textViewUbicacionSeleccionada);
         crearDialogAyuda();
 
@@ -82,7 +83,7 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
         Modelo.getInstance().setContext(this);
         //comprueba que permisos están activos y pide al usuario
         comprobarPedirPermisos();
-        mapaListView.notifyNewData();
+        despachosListView.notifyNewData();
     }
 
     @Override
@@ -227,12 +228,12 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()){
             case R.id.buttonMainIniciarAR:
                 if (permisosOk()) {
-                    if(mapaSeleccionado!=null) {
+                    if(despachoSeleccionado !=null) {
                         Intent intent = new Intent(this, ARActivity.class);
-                        intent.putExtra("MAPA",mapaSeleccionado);
+                        intent.putExtra("MAPA", despachoSeleccionado);
                         startActivity(intent);
                     }else{
-                        Toast.makeText(this, "No se ha seleccionado ningún mapa", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "No se ha seleccionado ningún despacho", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.d(LOGTAG, "Error boton click: no estan todos los permisos");
@@ -243,44 +244,44 @@ public class MainMenuActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onSelectedMapaChanged() {
-        mapaSeleccionado = mapaListView.getMapaSeleccionado();
-        if(mapaSeleccionado==null){
-            textViewUbicacionSeleccionada.setText("Ningun mapa seleccionado");
+    public void onSelectedDespachoChanged() {
+        despachoSeleccionado = despachosListView.getMapaSeleccionado();
+        if(despachoSeleccionado ==null){
+            textViewUbicacionSeleccionada.setText("Ningun despacho seleccionado");
         }else{
-            textViewUbicacionSeleccionada.setText(mapaSeleccionado.getNombre());
+            textViewUbicacionSeleccionada.setText(despachoSeleccionado.getNombre());
         }
     }
 
     @Override
-    public void onAddNewMapPushed() {
-        Intent intent = new Intent(this, EditMapActivity.class);
-        Modelo.getInstance().setMapaOriginal(null);
+    public void onAddNewDespachoPushed() {
+        Intent intent = new Intent(this, EditDespachoActivity.class);
+        Modelo.getInstance().setDespachoOriginal(null);
         startActivity(intent);
     }
 
     @Override
-    public void onEditMapPushed(Mapa mapaSeleccionado) {
-        Intent intent = new Intent(this, EditMapActivity.class);
-        Modelo.getInstance().setMapaOriginal(mapaSeleccionado);
+    public void onEditDespachoPushed(Despacho despachoSeleccionado) {
+        Intent intent = new Intent(this, EditDespachoActivity.class);
+        Modelo.getInstance().setDespachoOriginal(despachoSeleccionado);
         startActivity(intent);
     }
 
     @Override
-    public void onDelMapPushed(Mapa mapaSeleccionado) {
+    public void onDelDespachoPushed(Despacho despachoSeleccionado) {
         AlertDialog.Builder dialogConfirmDelete = new AlertDialog.Builder(this);
 
         // set title
-        dialogConfirmDelete.setTitle("¿Eliminar el mapa?");
+        dialogConfirmDelete.setTitle("¿Eliminar el despacho?");
 
         // set dialog inputMessage
         dialogConfirmDelete
-                .setMessage("¿Seguro que quiere eliminar el mapa seleccionado?\n" +
+                .setMessage("¿Seguro que quiere eliminar el despacho seleccionado?\n" +
                         "No podrá volver a recuperarlo")
                 .setCancelable(false)
                 .setPositiveButton("Eliminar",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
-                        mapaListView.deleteSelectedItem();
+                        despachosListView.deleteSelectedItem();
                     }
                 })
                 .setNegativeButton("Cancelar",new DialogInterface.OnClickListener() {

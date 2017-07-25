@@ -16,7 +16,7 @@ import android.graphics.Typeface;
 
 import com.example.roi.climaar.modelo.figuras.Textura;
 
-class GLTextDrawer {
+public class GLTextDrawer {
 
     private static final String FONT_DEFAULT = "Roboto-Regular.ttf";
     private static final int SIZE_DEFAULT = 100;
@@ -104,6 +104,12 @@ class GLTextDrawer {
             }else{
                 return null;
             }
+        }
+    }
+
+    public static void reloadTextDrawer(){
+        if(instance.isLoaded){
+            instance.isLoaded=false;
         }
     }
 
@@ -243,7 +249,7 @@ class GLTextDrawer {
 
         int len = text.length();                        // Get String Length
         float x = startX;
-        float y = startY-chrHeight-spaceY;
+        float y = startY;
 
         float[] fVertexData = new float[len*6*8];
         //x += ( chrWidth / 2.0f ) - ( fontPadX * scaleX );  // Adjust Start X
@@ -311,7 +317,8 @@ class GLTextDrawer {
     // R: the total width of the text that was drawn
     public float drawC(GLText glText,String text, float x, float y)  {
         float len = getLength( text );                  // Get Text Length
-        draw(glText, text, x - ( len / 2.0f ), y - ( getCharHeight() / 2.0f ) );  // Draw Text Centered
+        float height = getHeight(text);
+        draw(glText, text, x - ( len / 2.0f ), y + ( height / 2.0f ));  // Draw Text Centered
         return len;                                     // Return Length
     }
     public float drawCX(GLText glText,String text, float x, float y)  {
@@ -320,7 +327,8 @@ class GLTextDrawer {
         return len;                                     // Return Length
     }
     public void drawCY(GLText glText, String text, float x, float y)  {
-        draw(glText, text, x, y - ( getCharHeight() / 2.0f ) );  // Draw Text Centered (Y-Axis Only)
+        float height = getHeight(text);
+        draw(glText, text, x, y + ( height / 2.0f ) );  // Draw Text Centered (Y-Axis Only)
     }
 
     //--Set Scale--//

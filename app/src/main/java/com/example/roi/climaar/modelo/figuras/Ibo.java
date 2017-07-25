@@ -10,7 +10,7 @@ import com.example.roi.climaar.vista.Shader;
  * Created by roi on 1/05/17.
  */
 
-public abstract class Ibo extends Figura {
+abstract class Ibo extends Figura {
     /** Size of the position data in elements. */
     static final int POSITION_DATA_SIZE = 3;
     /** Size of the normal data in elements. */
@@ -27,8 +27,6 @@ public abstract class Ibo extends Figura {
     protected transient int indexCount;
     protected Textura textura;
     protected float[] color = {1f, 1f, 1f, 1f};
-
-
 
     public Ibo(Figura.FigureType type){
         super(type);

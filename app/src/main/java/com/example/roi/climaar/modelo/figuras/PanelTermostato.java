@@ -1,5 +1,7 @@
 package com.example.roi.climaar.modelo.figuras;
 
+import android.content.Context;
+import android.opengl.Matrix;
 import android.util.Log;
 
 import com.example.roi.climaar.modelo.JsonRest.DynamicMapElement;
@@ -10,6 +12,7 @@ import com.example.roi.climaar.vista.Shader;
 import java.util.Locale;
 
 import static java.lang.Float.NaN;
+import static java.lang.Float.floatToIntBits;
 
 /**
  * Created by roi on 27/06/17.
@@ -17,14 +20,16 @@ import static java.lang.Float.NaN;
 
 public class PanelTermostato extends GLText implements DynamicMapElement {
 
+    private static final float TAM_PANEL_X  = 20f;//20cm
     private static final String LOGTAG = "PanelTermostato";
+
     private int numDespacho;
-    private float tempActual;
-    private float tempConsignaFrio;
-    private float tempConsignaCalor;
-    private boolean modoFrio;
-    private float tempImpulsionAC;
-    private float tempImpulsionSR;
+    private transient float tempActual;
+    private transient float tempConsignaFrio;
+    private transient float tempConsignaCalor;
+    private transient boolean modoFrio;
+    private transient float tempImpulsionAC;
+    private transient float tempImpulsionSR;
 
     private boolean reloadText;
 
@@ -39,7 +44,8 @@ public class PanelTermostato extends GLText implements DynamicMapElement {
     private static final String MODO_CALOR = "Calor";
 
     public PanelTermostato(int numDespacho) {
-        super("",0,0,true);
+        super(FigureType.PANEL_TERMOSTATO,"Estado climatización - Despacho num."+numDespacho+"\n" +
+                "Conectando a Servidor...",0,0,true);
         isDynamic=true;
         this.numDespacho = numDespacho;
         this.reloadText = false;
@@ -49,33 +55,43 @@ public class PanelTermostato extends GLText implements DynamicMapElement {
         modoFrio = true;
         tempImpulsionAC = NaN;
         tempImpulsionSR = NaN;
+        setCentered(true);
+    }
+
+    @Override
+    public void loadFigura(Context context) {
+        super.loadFigura(context);
+        setScale(TAM_PANEL_X/getTextLength());
     }
 
     @Override
     public void dibujar(Shader shader, float[] modelViewMatrix) {
         if(reloadText){
-            writeText();
+            newText(formatString());
+            setScale(TAM_PANEL_X/getTextLength());
             reloadText = false;
         }
         super.dibujar(shader, modelViewMatrix);
     }
 
-    private void writeText(){
+    private String formatString(){
         String modoFrioString = modoFrio? MODO_FRIO : MODO_CALOR;
-        newText(String.format(Locale.ENGLISH,TEXT,
+        return String.format(Locale.ENGLISH,TEXT,
                 numDespacho,
                 tempActual,
                 tempConsignaCalor,tempConsignaFrio,
                 modoFrioString,
                 tempImpulsionAC,
-                tempImpulsionSR));
+                tempImpulsionSR);
     }
 
+    public void setNumDespacho(int numDespacho) {
+        this.numDespacho = numDespacho;
+    }
 
     @Override
     public void recargarInformacion(WebRestDataInterface dataInterface) {
         if(!isLoaded()) return;
-        Log.d(LOGTAG,"recargarInformacion(): tempActual="+(int)dataInterface.getfTempInterior());
         boolean cambios = false;
         if (dataInterface.getfTempInterior() != tempActual) {
             cambios = true;

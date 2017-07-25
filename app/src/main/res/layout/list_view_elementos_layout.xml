@@ -14,6 +14,7 @@
         android:paddingStart="12dp"
         android:paddingTop="12dp">
 
+        <!--
         <ImageButton
             android:id="@+id/imageButtonDel"
             android:layout_width="wrap_content"
@@ -22,21 +23,22 @@
             android:layout_alignParentTop="true"
             android:src="@drawable/ic_delete_black_24dp" />
 
+
         <ImageButton
             android:id="@+id/imageButtonAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@+id/imageButtonEdit"
-            android:src="@drawable/ic_add_black_24dp" />
+            android:src="@drawable/ic_add_black_24dp" /> -->
 
         <ImageButton
             android:id="@+id/imageButtonEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit_black_24dp"
             android:layout_alignParentTop="true"
-            android:layout_toStartOf="@+id/imageButtonDel"
-            android:src="@drawable/ic_edit_black_24dp" />
+            android:layout_alignParentEnd="true" />
 
         <TextView
             android:id="@+id/textView7"

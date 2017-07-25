@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.roi.climaar.R;
-import com.example.roi.climaar.modelo.mapa.MapElement;
+import com.example.roi.climaar.modelo.despacho.DespachoElement;
 
 import java.util.HashMap;
 
@@ -36,7 +36,7 @@ public class MenuOpciones extends LinearLayout implements MenuElement.OnCheckedC
 
     private MenuOpcionesListener listener;
 
-    private HashMap<MenuElement, MapElement> elementos;
+    private HashMap<MenuElement, DespachoElement> elementos;
 
 
     public MenuOpciones(Context context) {
@@ -70,26 +70,26 @@ public class MenuOpciones extends LinearLayout implements MenuElement.OnCheckedC
         this.listener = listener;
     }
 
-    public void addElemento(Context context, MapElement mapElement, String estado, boolean isVisible){
+    public void addElemento(Context context, DespachoElement despachoElement, String estado, boolean isVisible){
         MenuOpcionesListener tmplistener = listener;
         listener = null;//Desactivar listener
 
         MenuElement elemento = new MenuElement(context, this);
-        elemento.setNombre(mapElement.getName());
+        elemento.setNombre(despachoElement.getName());
         elemento.setEstado(estado);
         elemento.setChkVisible(isVisible);
         elemento.setListener(this);
-        elementos.put(elemento, mapElement);
+        elementos.put(elemento, despachoElement);
 
         //Reactivar listener
         listener = tmplistener;
     }
 
-    public void makeMenu(Context context,String mapName, boolean useBarometer, boolean extendedTracking){
+    public void makeMenu(Context context,String mapName, boolean hasBarometer, boolean useBarometer, boolean extendedTracking){
         MenuOpcionesListener tmplistener = listener;
         listener = null;//Desactivar listener
 
-        //Añadir Nombre mapa
+        //Añadir Nombre despacho
         TextView txtNombreMapa = createHeaderTextView(context,"Ubicación: "+mapName);
         scrollLayout.addView(txtNombreMapa,layoutParams);
 
@@ -103,9 +103,10 @@ public class MenuOpciones extends LinearLayout implements MenuElement.OnCheckedC
         scrollLayout.addView(txtConfig,layoutParams);
 
         CheckBox chkBoxUseBarometer = createCheckBox(context,"Usar baromero",useBarometer,USE_BAROMETER);
+        if(!hasBarometer) chkBoxUseBarometer.setEnabled(false);
         scrollLayout.addView(chkBoxUseBarometer,layoutParams);
 
-        CheckBox chkBoxExtTracking = createCheckBox(context,"ExtendedTracking",useBarometer,EXT_TRACKING);
+        CheckBox chkBoxExtTracking = createCheckBox(context,"ExtendedTracking",extendedTracking,EXT_TRACKING);
         scrollLayout.addView(chkBoxExtTracking,layoutParams);
 
         Button btnResetT = createButton(context,"Resetear seguimiento",RESET_TRACKING);
@@ -198,7 +199,7 @@ public class MenuOpciones extends LinearLayout implements MenuElement.OnCheckedC
     public interface MenuOpcionesListener{
         void setUseBarometerPressed(boolean useBarometer);
         void setExtTrackingPressed(boolean extTrackinActive);
-        void setVisibleElementPressed(MapElement element, boolean isVisible);
+        void setVisibleElementPressed(DespachoElement element, boolean isVisible);
         void resetTrackingPressed();
         void exitButtonPressed();
     }

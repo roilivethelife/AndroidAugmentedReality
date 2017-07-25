@@ -3,19 +3,14 @@ package com.example.roi.climaar.vista;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,22 +18,19 @@ import android.widget.Toast;
 
 import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.Modelo;
-import com.example.roi.climaar.modelo.mapa.MapElement;
-import com.example.roi.climaar.modelo.mapa.Mapa;
+import com.example.roi.climaar.modelo.despacho.Despacho;
 import com.example.roi.climaar.presentador.IPresentador;
 import com.example.roi.climaar.presentador.Presentador;
 import com.vuforia.State;
 
 
-import java.util.ArrayList;
 import android.os.Handler;
 
 /**
  * 
  */
 public class ARActivity extends Activity implements
-        IVista, IARActivity,
-        OnTouchInterface, Handler.Callback{
+        IVista, IARActivity, Handler.Callback{
 
     private static final int MSG_TOAST = 1;
     private static final int MSG_TEXTVIEW = 2;
@@ -76,11 +68,11 @@ public class ARActivity extends Activity implements
 
         //Recibir intent ubicación seleccionada
         Intent data = getIntent();
-        Mapa map = null;
+        Despacho map = null;
         if(data!=null && data.getExtras()!=null) {
-            map = (Mapa) data.getExtras().getSerializable("MAPA");
+            map = (Despacho) data.getExtras().getSerializable("MAPA");
             if(map==null){
-                Toast.makeText(this,"Error al iniciar AR: error al abrir el mapa",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"Error al iniciar AR: error al abrir el despacho",Toast.LENGTH_LONG).show();
                 finish();
             }
         }
@@ -189,26 +181,6 @@ public class ARActivity extends Activity implements
         iPresentador.onSurfaceChanged(width, height);
     }
 
-
-    /**
-     * Manejador de eventos de toque de pantalla, enviar al presentador
-     * @param event evento
-     * @return boolean
-     */
-    @Override
-    public boolean onCustomTouchEvent(MotionEvent event) {
-        if (event != null){
-            iPresentador.touchEvent(event.getX(),event.getY());
-
-            if (event.getAction() == MotionEvent.ACTION_MOVE){
-                //foat deltaX = (x - mPreviousX) / sensibility;
-                //float deltaY = (y - mPreviousY) / sensibility;
-            }
-            return true;
-        }else{
-            return false;
-        }
-    }
 
 
     @Override

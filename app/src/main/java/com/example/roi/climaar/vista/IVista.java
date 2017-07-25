@@ -3,8 +3,6 @@ package com.example.roi.climaar.vista;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 
-import com.example.roi.climaar.modelo.mapa.MapElement;
-
 /**
  * 
  */

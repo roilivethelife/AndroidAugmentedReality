@@ -36,6 +36,7 @@ public class PositionControler implements SensorEventListener{
 
 
     public enum TrackStatus{
+        DETECTED,
         TRACKED,
         EXT_TRACKED,
         GIRO_TRACKED,
@@ -54,6 +55,7 @@ public class PositionControler implements SensorEventListener{
     private float[] quatGiroscopioListener;
     //Ultima lectura altimetro
     private float altitud;
+    private boolean hasBarometer;
     private boolean useBarometer;
 
 
@@ -91,7 +93,6 @@ public class PositionControler implements SensorEventListener{
     private boolean calibrated=false;//traking realizado y calibración
 
 
-
     public PositionControler(Context context, PositionControlerCallback callback, boolean useBarometer){
         matrix = new float[16];
         lastGoodPosCamera = new float[3];
@@ -102,11 +103,17 @@ public class PositionControler implements SensorEventListener{
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensorRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
-        if(useBarometer)
-            mSensorBaro = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        mSensorBaro = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        if(mSensorBaro!=null){
+            hasBarometer=true;
+        }
 
         this.callback = callback;
         this.useBarometer = useBarometer;
+    }
+
+    public boolean hasBarometer() {
+        return hasBarometer;
     }
 
     /**
@@ -118,7 +125,7 @@ public class PositionControler implements SensorEventListener{
     public void onResume(){
         if(!listenerRegistered) {
             mSensorManager.registerListener(this, mSensorRotation, SensorManager.SENSOR_DELAY_GAME);//Una por segundo
-            if(useBarometer)
+            if(hasBarometer&&useBarometer)
                 mSensorManager.registerListener(this, mSensorBaro, SensorManager.SENSOR_DELAY_GAME);//Una por segundo
             listenerRegistered=true;
         }
@@ -129,7 +136,9 @@ public class PositionControler implements SensorEventListener{
     public void resetVars(){
         firstTracked=false;
         calibrated = false;
+        trackStatus = TrackStatus.NOT_TRACKED;
         lastPresure=1013.25f;
+        callback.onStateChanged(trackStatus);
     }
 
     /**
@@ -172,7 +181,6 @@ public class PositionControler implements SensorEventListener{
                     if(anguloZVuf>-10f && anguloZVuf<10f){
                         if(calibrated && ((currentTime-lastCalibTime)>10000) ){//Calibrar cada 10Seg
                             //Calibrar altimetro
-
                             if(useBarometer) {
                                 posCamara = invertTransformationMatrix(vuforiaMatrix);
                                 //Comenzar a calibrar
@@ -194,14 +202,22 @@ public class PositionControler implements SensorEventListener{
                     }
                 }
 
-                //Almacenar posicion camara para utilizar en 0.5seg
-                //de esta forma evitamos errores de posicion al perder el tracking
-                updateLastGoodPosCamera();
-                //Return matrixVuforia
-                matrix=vuforiaMatrix;
-                if(trackStatus!=TrackStatus.TRACKED){
-                    trackStatus = TrackStatus.TRACKED;
-                    if(callback!=null) callback.onStateChanged(TrackStatus.TRACKED);
+                if(firstTracked){
+                    //Almacenar posicion camara para utilizar en 0.5seg
+                    //de esta forma evitamos errores de posicion al perder el tracking
+                    updateLastGoodPosCamera();
+                    //Return matrixVuforia
+                    matrix=vuforiaMatrix;
+                    if(trackStatus!=TrackStatus.TRACKED){
+                        trackStatus = TrackStatus.TRACKED;
+                        if(callback!=null) callback.onStateChanged(TrackStatus.TRACKED);
+                    }
+                }else{//Detectado pero no calibrado, esperamos
+                    if(trackStatus!=TrackStatus.DETECTED){
+                        trackStatus = TrackStatus.DETECTED;
+                        if(callback!=null) callback.onStateChanged(TrackStatus.DETECTED);
+                    }
+                    matrix = ARRender.nullMatrix;
                 }
                 break;
 
@@ -447,6 +463,10 @@ public class PositionControler implements SensorEventListener{
     }
 
     public void setUseBarometer(boolean useBarometer) {
+        if(!hasBarometer){
+            this.useBarometer=false;
+            return;
+        }
         if(useBarometer&& !this.useBarometer){//Encender use barometer
             //Registrar sensor
             if(mSensorBaro==null){

@@ -14,7 +14,7 @@ public abstract class Figura implements Serializable{
     protected boolean isDynamic;
 
     public enum FigureType {
-        OBJ, SUELO_RADIANTE, VENTILADOR, TEXT, RECTANGLE
+        OBJ, SUELO_RADIANTE, VENTILADOR, TEXT, RECTANGLE, PANEL_EXTERIOR, PANEL_TERMOSTATO
     }
 
     private FigureType type;

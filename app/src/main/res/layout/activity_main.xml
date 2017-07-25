@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.roi.climaar.MainMenuActivity">
+    tools:context="com.example.roi.climaar.menus.MainMenuActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="Ubicación seleccionada:"
+                    android:text="Despacho seleccionado:"
                     android:textStyle="bold" />
 
                 <TextView
@@ -61,7 +61,7 @@
                 android:text="Iniciar Realidad Aumentada" />
         </LinearLayout>
 
-        <com.example.roi.climaar.MapaListView
+        <com.example.roi.climaar.menus.DespachosListView
             android:id="@+id/mapa_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

@@ -4,16 +4,13 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-import com.example.roi.climaar.modelo.mapa.MapElement;
+import com.example.roi.climaar.modelo.despacho.DespachoElement;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static java.lang.Float.NaN;
 
@@ -58,20 +55,20 @@ public class WebRestData implements WebRestDataInterface{
     private boolean onPause;
 
 
-    public WebRestData(String despacho, ArrayList<MapElement> dynMapElements) {
-        this(despacho,DEFAULT_DELAY, dynMapElements);
+    public WebRestData(String despacho, ArrayList<DespachoElement> dynDespachoElements) {
+        this(despacho,DEFAULT_DELAY, dynDespachoElements);
     }
 
-    public WebRestData(String despacho, long delayMillis, ArrayList<MapElement> mapElements){
+    public WebRestData(String despacho, long delayMillis, ArrayList<DespachoElement> despachoElements){
         this.numDespacho = despacho;
         onPause = true;
         setDelay(delayMillis);
 
         dynMapElements= new ArrayList<>();
 
-        //Recorrer mapElements, los que son dinamicos comprobar que sean instancia
+        //Recorrer despachoElements, los que son dinamicos comprobar que sean instancia
         //de DynamicMapElement, y agregarlos a la lista
-        for (MapElement mE :mapElements) {
+        for (DespachoElement mE : despachoElements) {
             if(mE.isDynamic()){
                 DynamicMapElement dynMapElement = mE.getDynamicFigura();
                 if(dynMapElement!=null){
@@ -79,10 +76,10 @@ public class WebRestData implements WebRestDataInterface{
                 }
             }
         }
-        Log.d(LOGTAG,"Dynamic elements="+mapElements.size());
+        Log.d(LOGTAG,"Dynamic elements="+ despachoElements.size());
         mHandler = new Handler();
-        createRunnable();
         initVars();
+        createRunnable();
     }
 
     private void initVars() {
@@ -193,10 +190,11 @@ public class WebRestData implements WebRestDataInterface{
     }
 
     public class LoadDataTask extends AsyncTask<Void,Void, Void> {
-
+        boolean validData;
         @Override
         protected Void doInBackground(Void... params) {
             try {
+                validData = false;
                 String urlDespacho = URL_DESPACHO+numDespacho;
                 String jsonStr=  HttpRequest.get(urlDespacho).
                         accept("application/json").body();
@@ -246,23 +244,24 @@ public class WebRestData implements WebRestDataInterface{
                         fACtempRetorno = (float)observation.optDouble("value");
                     }
                 }
-
-
-
+                validData = true;
                 //String measureTime = observation.getString("deviceName");
                 //SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss aa");
                 //Date parsedTimeStamp = dateFormat.parse(measureTime);
             } catch (HttpRequest.HttpRequestException exception) {
-                exception.printStackTrace();
+                //exception.printStackTrace();
+                //TODO: avisar a presentador que no hay internet (en postExecute?)
             } catch (JSONException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void p) {
-            onUpdateDataReceived();
+            if(validData){
+                onUpdateDataReceived();
+            }
         }
     }
 

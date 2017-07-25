@@ -36,7 +36,7 @@ public class VuforiaControler implements SampleApplicationControl{
     private static final String LOGTAG = "VuforiaControler";
     private final static String licenseKey = "AWpyQvb/////AAAAGZx5ZAoRvk6msRcJbt6TCoh4ZH7rhIazxFYCsaoEBwNs9ZZxKeK5+QPR3HTN3Bq3wr1VwQWjMW+75kbrMEG4Jwzu7EAjn4vVw9MZZKuJMn0CThCtV6EeYwRXfsoB8E+vILrv6885BpcZ9ytCaOjZYsKBYS370c739mpOmCjMP8ksBarHN52ZwFjLYW/K6VOHCbSNrHzEOy0AAtPT3RDMbC1crImFUlCIIPCqalThOP9t1llOZlR5WUddD9Ee4A18pV+Pytz24Qtkkpz+eBrVmbA6yzhjDW+O5TpNJID9wUnuvjVvL9ysROBIwofPb6yyyNye/gHlkLSKvR9rabm2bzNf2xS5OPk2ua/3sdoOkDw1";
 
-    private boolean extendedTrackingActive=true;
+    private boolean extendedTrackingActive;
     private DataSet currentDataSet;
 
     private Activity activity;
@@ -44,9 +44,10 @@ public class VuforiaControler implements SampleApplicationControl{
 
     SampleApplicationSession vuforiaAppSession;
 
-    public  VuforiaControler(Activity activity, Presentador presentador){
+    public  VuforiaControler(Activity activity, Presentador presentador, boolean extendedTrackingActive){
         this.activity = activity;
         this.presentador = presentador;
+        this.extendedTrackingActive = extendedTrackingActive;
     }
 
     /**

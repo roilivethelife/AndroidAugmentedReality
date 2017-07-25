@@ -1,4 +1,4 @@
-package com.example.roi.climaar;
+package com.example.roi.climaar.menus;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -13,16 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.Modelo;
-import com.example.roi.climaar.modelo.mapa.Mapa;
-
-import java.util.ArrayList;
+import com.example.roi.climaar.modelo.despacho.Despacho;
 
 /**
  * Created by roi on 22/06/17.
  */
 
-public class MapaListView extends LinearLayout implements AdapterView.OnItemClickListener, View.OnClickListener{
+public class DespachosListView extends LinearLayout implements AdapterView.OnItemClickListener, View.OnClickListener{
 
     private ItemAdapter mItemAdapter;
     private ListView mListView;
@@ -30,14 +29,14 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
     private ImageButton buttonEdit;
     private ImageButton buttonDel;
 
-    private MapaListViewInterface listener;
+    private DespachosListViewInterface listener;
 
-    public MapaListView(Context context) {
+    public DespachosListView(Context context) {
         super(context);
         inicializar(context);
     }
 
-    public MapaListView(Context context, AttributeSet attrs) {
+    public DespachosListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         inicializar(context);
     }
@@ -46,7 +45,7 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
         //Utilizamos el layout menu opciones layout
         String infService = Context.LAYOUT_INFLATER_SERVICE;
         LayoutInflater li =(LayoutInflater)getContext().getSystemService(infService);
-        li.inflate(R.layout.list_view_mapas_layout, this, true);
+        li.inflate(R.layout.list_view_despachos_layout, this, true);
 
         mItemAdapter = new ItemAdapter(context);
         mListView = (ListView) findViewById(R.id.list_view_mapas);
@@ -63,7 +62,7 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
 
     }
 
-    public void setListener(MapaListViewInterface listener) {
+    public void setListener(DespachosListViewInterface listener) {
         this.listener = listener;
     }
 
@@ -85,7 +84,7 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
         mItemAdapter.notifyDataSetChanged();
     }
 
-    public Mapa getMapaSeleccionado(){
+    public Despacho getMapaSeleccionado(){
         if(mItemAdapter.seleccionado==-1) return null;
         return Modelo.getInstance().getMapa(mItemAdapter.seleccionado);
     }
@@ -113,7 +112,7 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
             buttonDel.setEnabled(true);
         }
         if(listener!=null){
-            listener.onSelectedMapaChanged();
+            listener.onSelectedDespachoChanged();
         }
     }
 
@@ -127,17 +126,17 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
         switch (v.getId()){
             case R.id.imageButtonAdd:
                 if(listener!=null){
-                    listener.onAddNewMapPushed();
+                    listener.onAddNewDespachoPushed();
                 }
                 break;
             case R.id.imageButtonEdit:
                 if(listener!=null){
-                    listener.onEditMapPushed(getMapaSeleccionado());
+                    listener.onEditDespachoPushed(getMapaSeleccionado());
                 }
                 break;
             case R.id.imageButtonDel:
                 if(listener!=null) {
-                    listener.onDelMapPushed(getMapaSeleccionado());
+                    listener.onDelDespachoPushed(getMapaSeleccionado());
                 }
                 break;
         }
@@ -181,7 +180,7 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
             TextView tvNombre = (TextView) rowView.findViewById(R.id.textViewNombre);
             TextView tvDescripcion = (TextView) rowView.findViewById(R.id.textViewDescripcion);
 
-            Mapa map = Modelo.getInstance().getMapa(i);
+            Despacho map = Modelo.getInstance().getMapa(i);
             tvNombre.setText(map.getNombre());
             tvDescripcion.setText(map.getDescripcion());
             //Log.d("REDRAW","I="+i+"   Seleccionado="+seleccionado);
@@ -197,10 +196,10 @@ public class MapaListView extends LinearLayout implements AdapterView.OnItemClic
 
     }
 
-    public interface MapaListViewInterface{
-        void onSelectedMapaChanged();
-        void onAddNewMapPushed();
-        void onEditMapPushed(Mapa mapaSeleccionado);
-        void onDelMapPushed(Mapa mapaSeleccionado);
+    public interface DespachosListViewInterface {
+        void onSelectedDespachoChanged();
+        void onAddNewDespachoPushed();
+        void onEditDespachoPushed(Despacho despachoSeleccionado);
+        void onDelDespachoPushed(Despacho despachoSeleccionado);
     }
 }

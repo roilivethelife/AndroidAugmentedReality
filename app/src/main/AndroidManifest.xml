@@ -28,7 +28,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainMenuActivity"
+        <activity android:name=".menus.MainMenuActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -41,9 +41,9 @@
             android:name=".vista.ARActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" />
-        <activity android:name=".menus.editmap.EditMapActivity"
+        <activity android:name=".menus.editdespacho.EditDespachoActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".menus.editmap.EditElementoActivity"
+        <activity android:name=".menus.editelemento.EditElementoActivity"
             android:screenOrientation="portrait"/>
     </application>
 

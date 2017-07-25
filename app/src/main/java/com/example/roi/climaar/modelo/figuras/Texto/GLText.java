@@ -2,6 +2,7 @@ package com.example.roi.climaar.modelo.figuras.Texto;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.opengl.Matrix;
 import android.util.Log;
 
 import com.example.roi.climaar.modelo.figuras.Rectangulo;
@@ -11,6 +12,7 @@ import com.example.roi.climaar.modelo.figuras.VboClient;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Locale;
 
 /**
  * Created by roi on 30/04/17.
@@ -20,6 +22,9 @@ public class GLText extends VboClient {
 
     private String text;
     private float posX, posY;
+    private boolean centered;
+
+    private float scale;
 
 
     private int numChars;
@@ -40,11 +45,17 @@ public class GLText extends VboClient {
     }
 
     public GLText( String text, int posX, int posY, boolean drawBackground){
-        super(FigureType.TEXT);
+        this(FigureType.TEXT,text,posX,posY,drawBackground);
+    }
+
+    protected GLText(FigureType figureType, String text, int posX, int posY, boolean drawBackground){
+        super(figureType);
         this.text = text;
         this.posX=posX;
         this.posY=posY;
         this.drawBackground = drawBackground;
+        this.centered = false;
+        this.scale=1.0f;
     }
 
     @Override
@@ -56,17 +67,27 @@ public class GLText extends VboClient {
         color[3]=1f;
 
         glTextDrawer = GLTextDrawer.loadText(context.getAssets());
-        glTextDrawer.draw(this,text,posX,posY);
+        if(centered)
+            glTextDrawer.drawC(this,text,posX,posY);
+        else
+            glTextDrawer.draw(this,text,posX,posY);
 
         if(drawBackground){
+            float x=posX-BORDE_BACKGROUND;
+            float y=posY+BORDE_BACKGROUND+getCharHeight();
+            if(centered){
+                x-= getTextLength()/2.0f;
+                y+= getTextHeight()/2.0f;
+            }
             background = new Rectangulo(
-                    posX-BORDE_BACKGROUND,
-                    posY+BORDE_BACKGROUND,
-                    -1f,
-                    glTextDrawer.getLength(text)+BORDE_BACKGROUND,
-                    -glTextDrawer.getHeight(text)-BORDE_BACKGROUND);
+                    x,
+                    y,
+                    -5f,
+                    glTextDrawer.getLength(text)+BORDE_BACKGROUND+BORDE_BACKGROUND,
+                    -glTextDrawer.getHeight(text)-BORDE_BACKGROUND-BORDE_BACKGROUND);
             background.loadFigura(context);
         }
+        Log.d("GLText","loadFigura()");
         isLoaded = true;
     }
 
@@ -83,6 +104,7 @@ public class GLText extends VboClient {
 
     @Override
     public void dibujar(Shader shader, float[] modelViewMatrix) {
+        Matrix.scaleM(modelViewMatrix,0,scale,scale,scale);
         if(drawBackground && background!=null){
             background.dibujar(shader, modelViewMatrix);
         }
@@ -98,10 +120,22 @@ public class GLText extends VboClient {
         Log.d("GLText","NewText="+text);
         this.text = text;
         updateAtributes();
-        background.setHeight(-glTextDrawer.getHeight(text)-BORDE_BACKGROUND);
-        background.setWidth(glTextDrawer.getLength(text)+BORDE_BACKGROUND);
-        background.updateAtributes();
-        glTextDrawer.draw(this,text,posX,posY);
+        if(drawBackground) {
+            float x=posX-(BORDE_BACKGROUND);
+            float y=posY+(BORDE_BACKGROUND)+getCharHeight();
+            if(centered){
+                x-= getTextLength()/2.0f;
+                y+= getTextHeight()/2.0f;
+            }
+            background.setPos(x,y,-5f);
+            background.setHeight(-glTextDrawer.getHeight(text) - BORDE_BACKGROUND-BORDE_BACKGROUND);
+            background.setWidth(glTextDrawer.getLength(text) + BORDE_BACKGROUND+BORDE_BACKGROUND);
+            background.updateAtributes();
+        }
+        if(centered)
+            glTextDrawer.drawC(this,text,posX,posY);
+        else
+            glTextDrawer.draw(this,text,posX,posY);
     }
 
 
@@ -148,5 +182,15 @@ public class GLText extends VboClient {
 
     public float getTextHeight(){
         return glTextDrawer.getHeight(text);
+    }
+
+    public float getTextLength() { return  glTextDrawer.getLength(text);}
+
+    public void setCentered(boolean centered) {
+        this.centered = centered;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 }

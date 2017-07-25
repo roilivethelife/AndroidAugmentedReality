@@ -1,4 +1,4 @@
-package com.example.roi.climaar.menus.editmap;
+package com.example.roi.climaar.menus.editdespacho;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -13,7 +13,7 @@ import com.example.roi.climaar.R;
  * Created by roi on 25/06/17.
  */
 
-public class ElementoInfoListItem extends LinearLayout {
+class ElementoInfoListItem extends LinearLayout {
     TextView nombre;
     TextView desc;
 

@@ -1,4 +1,4 @@
-package com.example.roi.climaar.modelo.mapa;
+package com.example.roi.climaar.modelo.despacho;
 
 import com.example.roi.climaar.modelo.JsonRest.DynamicMapElement;
 import com.example.roi.climaar.modelo.figuras.Figura;
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Created by roi on 10/06/17.
  */
 
-public class MapElement implements Serializable{
+public class DespachoElement implements Serializable{
     String name;
     Figura figura;
     public boolean visible=true;
@@ -18,7 +18,7 @@ public class MapElement implements Serializable{
     public float[] pos= {0.0f,0.0f,0.0f};
     public boolean alignCamera=false;
 
-    public MapElement(MapElement m){
+    public DespachoElement(DespachoElement m){
         this.name = m.name;
         figura = m.figura;
         scale = scale.clone();
@@ -30,10 +30,10 @@ public class MapElement implements Serializable{
 
     /**
      * Constructor
-     * @param name Nombre del elemento del mapa
+     * @param name Nombre del elemento del despacho
      * @param figura Figura a dibujar
      */
-    public MapElement(String name, Figura figura) {
+    public DespachoElement(String name, Figura figura) {
         this.name = name;
         this.figura = figura;
     }
@@ -69,20 +69,33 @@ public class MapElement implements Serializable{
         }
     }
 
-    public String getFigureType(){
+    public Figura.FigureType getFigureType(){
+        if(figura==null) return null;
+        else return figura.getType();
+    }
+
+    public String getFigureTypeString(){
         if(figura==null) return "Desconocido";
         switch (figura.getType()){
             case OBJ:
-                return "OBJ 3D";
+                return "Objeto 3D";
             case SUELO_RADIANTE:
                 return "Suelo radiante";
             case VENTILADOR:
                 return "Ventilador";
+            case PANEL_EXTERIOR:
+                return "Panel exterior";
+            case PANEL_TERMOSTATO:
+                return "Panel termostato";
             case TEXT:
                 return "Texto";
             default:
                 return "Otro";
         }
+    }
+
+    public Figura getFigura() {
+        return figura;
     }
 
     public void setName(String name) {

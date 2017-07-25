@@ -6,10 +6,9 @@ import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.figuras.Obj;
 import com.example.roi.climaar.modelo.figuras.PanelTermostato;
 import com.example.roi.climaar.modelo.figuras.SueloRadiante;
-import com.example.roi.climaar.modelo.figuras.Texto.GLText;
 import com.example.roi.climaar.modelo.figuras.Ventilador;
-import com.example.roi.climaar.modelo.mapa.MapElement;
-import com.example.roi.climaar.modelo.mapa.Mapa;
+import com.example.roi.climaar.modelo.despacho.Despacho;
+import com.example.roi.climaar.modelo.despacho.DespachoElement;
 
 import java.util.ArrayList;
 
@@ -21,14 +20,14 @@ public class Modelo{
 
     private static Modelo instance = new Modelo();
     private Context context;
-    private ArrayList<Mapa> mapas;
+    private ArrayList<Despacho> despachos;
 
-    private Mapa mapaEditar;
-    private Mapa mapaOriginal;
-    private MapElement editMapElement;
+    private Despacho despachoEditar;
+    private Despacho despachoOriginal;
+    private DespachoElement editDespachoElement;
 
     private Modelo(){
-        mapas = new ArrayList<>();
+        despachos = new ArrayList<>();
     }
 
     public static Modelo getInstance(){
@@ -44,38 +43,38 @@ public class Modelo{
     }
 
     public int getMapasSize(){
-        return mapas.size();
+        return despachos.size();
     }
 
-    public Mapa getMapa(int index){
-        if(index<0||index>=mapas.size()){
+    public Despacho getMapa(int index){
+        if(index<0||index>= despachos.size()){
             return null;
         }
-        return mapas.get(index);
+        return despachos.get(index);
     }
 
     public boolean deleteMapa(int index){
-        if(index<0||index>=mapas.size()){
+        if(index<0||index>= despachos.size()){
             return false;
         }
-        mapas.remove(index);
+        despachos.remove(index);
         return true;
     }
 
-    public boolean deleteMapa(Mapa mapa){
-        return mapas.remove(mapa);
+    public boolean deleteMapa(Despacho despacho){
+        return despachos.remove(despacho);
     }
 
 
     /*
-    public ArrayList<Mapa> getMapas() {
-        if(mapas.size()==0){
-            mapas.add(createLoadDefaultMap());
+    public ArrayList<Despacho> getMapas() {
+        if(despachos.size()==0){
+            despachos.add(createLoadDefaultMap());
         }
-        return mapas;
+        return despachos;
     }*/
 
-    public Mapa createLoadDefaultMap(){
+    public Despacho createLoadDefaultMap(){
             float[] tamMap = new float[3];
             tamMap[0] = 421.6f;
             tamMap[1] = 227.6f;
@@ -84,63 +83,132 @@ public class Modelo{
             markerPos[0]=114f;//Distancia desde pared izq
             markerPos[1]=89.3f;//Altura desde suelo
             markerPos[2]=40f;//Distancia desde pared
-            Mapa map = new Mapa("CuartoFondo",tamMap,markerPos);
+            Despacho map = new Despacho("CuartoFondo",tamMap,markerPos);
             map.setDescripcion("DefaultMap: cuartoFondo");
-            MapElement cuboCentro= null;
-            MapElement habitacionElement = null;
-            MapElement sueloRadiante = null;
-            cuboCentro = new MapElement("CuboCentro",new Obj(R.raw.cubo));
+            DespachoElement cuboCentro= null;
+            DespachoElement habitacionElement = null;
+            DespachoElement sueloRadiante = null;
+            cuboCentro = new DespachoElement("CuboCentro",new Obj(R.raw.cubo));
             cuboCentro.pos[0]=markerPos[0];
             cuboCentro.pos[1]=markerPos[1];
             cuboCentro.pos[2]=markerPos[2];
             //cuboCentro.alignCamera=true;
-            map.mapaElements.add(cuboCentro);
+            map.despachoElements.add(cuboCentro);
 
-            sueloRadiante = new MapElement("Suelo",new SueloRadiante(421,337));
-            sueloRadiante.pos[0]=-20f;
-            map.mapaElements.add(sueloRadiante);
-            MapElement fan = new MapElement("Ventilador",new Ventilador(true));
+            sueloRadiante = new DespachoElement("Suelo",new SueloRadiante(421,337));
+            sueloRadiante.pos[1]=-20f;
+            map.despachoElements.add(sueloRadiante);
+            DespachoElement fan = new DespachoElement("Ventilador",new Ventilador(true));
             //Posicion = posicion lampara
             fan.pos[0] = 197f;
             fan.pos[1] = 227.6f;
             fan.pos[2] = 166.8f;
-            map.mapaElements.add(fan);
-            //map.mapaElements.add(habitacionElement);
-            MapElement panel = new MapElement("Panel",new PanelTermostato(209));
+            map.despachoElements.add(fan);
+            //map.despachoElements.add(habitacionElement);
+            DespachoElement panel = new DespachoElement("Panel",new PanelTermostato(209));
             //texto.alignCamera=true;
             panel.pos[0]=markerPos[0];
             panel.pos[1]=markerPos[1];
             panel.pos[2]=markerPos[2];
-            map.mapaElements.add(panel);
+            map.despachoElements.add(panel);
             return map;
         }
 
-    public Mapa getMapaEditar() {
-        return mapaEditar;
+    public Despacho getDespachoEditar() {
+        return despachoEditar;
     }
 
-    public void setMapaEditar(Mapa mapaEditar) {
-        this.mapaEditar = mapaEditar;
+    public void setDespachoEditar(Despacho despachoEditar) {
+        this.despachoEditar = despachoEditar;
     }
 
-    public Mapa getMapaOriginal() {
-        return mapaOriginal;
+    public Despacho getDespachoOriginal() {
+        return despachoOriginal;
     }
 
-    public void setMapaOriginal(Mapa mapaOriginal) {
-        this.mapaOriginal = mapaOriginal;
+    public void setDespachoOriginal(Despacho despachoOriginal) {
+        this.despachoOriginal = despachoOriginal;
     }
 
-    public void setEditMapElement(MapElement editMapElement) {
-        this.editMapElement = editMapElement;
+    public void setEditDespachoElement(DespachoElement editDespachoElement) {
+        this.editDespachoElement = editDespachoElement;
     }
 
-    public MapElement getEditMapElement() {
-        return editMapElement;
+    public DespachoElement getEditDespachoElement() {
+        return editDespachoElement;
     }
 
-    public void addMapa(Mapa mapaEditar) {
-        if(!mapas.contains(mapaEditar))
-            mapas.add(mapaEditar);
+    public void addMapa(Despacho despachoEditar) {
+        if(!despachos.contains(despachoEditar))
+            despachos.add(despachoEditar);
+    }
+
+
+    public void guardarObjetos(){
+        //TODO: descomentar funciones
+        /*
+        try
+        {
+            //Guardar despachos
+            ObjectOutputStream oos = new ObjectOutputStream(
+                    context.openFileOutput(FILE_MAPAS,Context.MODE_PRIVATE));
+            for (Despacho map : despachos) {
+                oos.writeObject(map);
+            }
+            Object end = null;
+            oos.writeObject(end);
+            oos.close();
+            Toast.makeText(context,"Mapas guardados, num="+despachos.size(),Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception ex)
+        {
+            Log.e("AppInstance", "guardarObjetos(): Error al guardar el fichero "+
+                    FILE_MAPAS+"en memoria interna");
+            ex.printStackTrace();
+        }*/
+    }
+
+    public void leerObjetos(){
+        //TODO: descomentar funciones
+        /*try
+        {
+            despachos = new ArrayList<>();
+            //Leer despachos
+            ObjectInputStream ois = new ObjectInputStream(
+                    context.openFileInput(FILE_MAPAS));
+
+            Object obj = ois.readObject();//leer primer objeto
+            while (obj!=null){
+                if(obj instanceof Despacho){
+                    Despacho map = (Despacho)obj;
+                    for (MapaElement mElement :
+                            map.despachoElements) {
+
+                    }
+                    despachos.add(map);
+                }
+                obj = ois.readObject();//leer siguiente objeto
+                ois.close();
+            }
+            if(despachos.size()==0){
+                despachos.add(MapControler.createLoadDefaultMap());
+            }
+            Toast.makeText(context,"Mapas leidos: num="+despachos.size(),Toast.LENGTH_SHORT).show();
+
+        }
+        catch (EOFException ex)
+        {
+            Log.e("AppInstance", "leer(): Error al leer el fichero "+
+                    FILE_MAPAS+"en memoria interna");
+            ex.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }*/
+        //despachos = new ArrayList<>();
+        //despachos.add(MapControler.createLoadDefaultMap());
     }
 }

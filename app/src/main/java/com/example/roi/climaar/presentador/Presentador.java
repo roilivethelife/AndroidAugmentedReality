@@ -1,19 +1,18 @@
 package com.example.roi.climaar.presentador;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.opengl.GLSurfaceView;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.example.roi.climaar.R;
 import com.example.roi.climaar.modelo.JsonRest.WebRestData;
 import com.example.roi.climaar.modelo.Modelo;
-import com.example.roi.climaar.modelo.mapa.MapElement;
-import com.example.roi.climaar.modelo.mapa.Mapa;
+import com.example.roi.climaar.modelo.despacho.Despacho;
+import com.example.roi.climaar.modelo.despacho.DespachoElement;
+import com.example.roi.climaar.modelo.figuras.Texto.GLTextDrawer;
 import com.example.roi.climaar.presentador.vuforia.VuforiaControler;
 import com.example.roi.climaar.vista.ARActivity;
 import com.example.roi.climaar.vista.ARRender;
@@ -21,9 +20,6 @@ import com.example.roi.climaar.vista.IVista;
 import com.example.roi.climaar.vista.MenuOpciones;
 import com.example.roi.climaar.vista.MiGlSurfaceView;
 import com.vuforia.State;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 
 
 /**
@@ -33,9 +29,11 @@ import javax.microedition.khronos.opengles.GL10;
 public class Presentador implements  IPresentador, PositionControlerCallback, MenuOpciones.MenuOpcionesListener, View.OnClickListener {
     private static final String LOGTAG = "Presentador";
 
+    private static final boolean USE_BAROMETER_DEF  = false;
+    private static final boolean USE_EXT_TRACK_DEF  = true;
 
     private ARActivity arActivity;
-    private MiGlSurfaceView glView;
+    private GLSurfaceView glView;
 
     private Modelo modelo;
     private VuforiaControler vuforiaControler;
@@ -48,18 +46,18 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
     private boolean fabPressed;
     private FloatingActionButton fab;
 
-    private Mapa actualMapa;
+    private Despacho actualDespacho;
 
-    public Presentador(IVista iVista, ARActivity activity, Mapa mapa) {
+    public Presentador(IVista iVista, ARActivity activity, Despacho despacho) {
         this.iVista = iVista;
         this.arActivity = activity;
-        this.actualMapa = mapa;
-        this.vuforiaControler = new VuforiaControler(activity,this);
+        this.actualDespacho = despacho;
+        this.vuforiaControler = new VuforiaControler(activity,this,USE_EXT_TRACK_DEF);
 
         this.modelo = Modelo.getInstance();
-        this.positionControler = new PositionControler(activity,this, false);
+        this.positionControler = new PositionControler(activity,this, USE_BAROMETER_DEF);
 
-        this.webRestData = new WebRestData("209",mapa.mapaElements);
+        this.webRestData = new WebRestData(Integer.toString(despacho.getNumDespacho()), despacho.despachoElements);
     }
 
 
@@ -67,15 +65,6 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
      */
     @Override
     public void btnFapPushed() {
-
-    }
-
-    /**
-     * @param elemento elemento
-     * @param visible  visibilidad
-     */
-    @Override
-    public void btnSetVisibleElemento(int elemento, boolean visible) {
 
     }
 
@@ -91,28 +80,14 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
         return positionControler.updateLocation(state);
     }
 
-
-    /**
-     * Metodo llamado cuando ha habido un toque en pantalla
-     *
-     * @param x posicion toque eje X
-     * @param y posicion toque eje Y
-     */
-    @Override
-    public void touchEvent(float x, float y) {
-
-    }
-
     @Override
     public void onCreate() {
         Log.d(LOGTAG,"Presentador onCreate");
         iVista.mostrarBarraCargando(true);
         vuforiaControler.onCreate();
 
-        crearMenuOpciones();
+        crearMenuOpciones(positionControler.hasBarometer(),USE_BAROMETER_DEF,USE_EXT_TRACK_DEF);
         configurarFAB();
-
-
     }
 
     private void configurarFAB() {
@@ -120,13 +95,16 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
         fab.setOnClickListener(this);
     }
 
-    private void crearMenuOpciones() {
+    /**
+     * Crear menu opciones
+     */
+    private void crearMenuOpciones(boolean hasBarometer,boolean useBaro, boolean extendedTrackEnabled) {
         menuOpciones = iVista.getMenuOpciones();
-        for (MapElement mapElement :
-                actualMapa.mapaElements) {
-            menuOpciones.addElemento(arActivity,mapElement,"estado",true);
+        for (DespachoElement despachoElement :
+                actualDespacho.despachoElements) {
+            menuOpciones.addElemento(arActivity, despachoElement,"estado",true);
         }
-        menuOpciones.makeMenu(arActivity,actualMapa.getNombre(),true,true);
+        menuOpciones.makeMenu(arActivity, actualDespacho.getNombre(),hasBarometer,useBaro,extendedTrackEnabled);
         menuOpciones.setListener(this);
     }
 
@@ -170,11 +148,13 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
 
     @Override
     public void loadFiguras() {
-        actualMapa.loadFiguras(modelo.getContext());
+        GLTextDrawer.reloadTextDrawer();
+        actualDespacho.loadFiguras(modelo.getContext());
     }
 
     @Override
     public void onSurfaceCreated() {
+        //Cargar
         vuforiaControler.onSurfaceCreated();
     }
 
@@ -185,14 +165,13 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
 
     public void initApplicationAR(){
         //CrearRender y SurfaceView
-        ARRender arRender = new ARRender(arActivity,arActivity, actualMapa);
-        glView = new MiGlSurfaceView(arActivity);
-        glView.setOnTouchInterface(arActivity);
-        glView.setRenderer(arRender);
+        ARRender arRender = new ARRender(arActivity,arActivity, actualDespacho);
+        glView = arRender;
+        arRender.setRenderer(arRender);
 
         //Añadir glView
-        iVista.addGLView(glView);
-        glView.setVisibility(View.VISIBLE);
+        iVista.addGLView(arRender);
+        arRender.setVisibility(View.VISIBLE);
         arRender.setActive(true);
     }
 
@@ -209,16 +188,20 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
     public void onStateChanged(PositionControler.TrackStatus status) {
         switch (status){
             case NOT_TRACKED:
-                iVista.mostrarTextoDebug("Not tracked");
+                iVista.mostrarTextoDebug("No inicializado: acerque el dispositivo al marcador");
                 break;
+            case DETECTED:
+                iVista.mostrarTextoDebug("No inicializado: marcador detectado\n" +
+                        "Acerque más el disposivo, de frente al marcador");
             case TRACKED:
-                iVista.mostrarTextoDebug("Tracked");
+                iVista.mostrarToast("Sistema calibrado, ya puede mover el dispositivo libremente");
+                iVista.mostrarTextoDebug("Iniciado: precisión buena");
                 break;
             case EXT_TRACKED:
-                iVista.mostrarTextoDebug("Ext tracked");
+                iVista.mostrarTextoDebug("Iniciado: precisión media");
                 break;
             case GIRO_TRACKED:
-                iVista.mostrarTextoDebug("Giro tracked");
+                iVista.mostrarTextoDebug("Iniciado: precisión baja. Solo se detectan cambios de orientación");
                 break;
 
         }
@@ -231,8 +214,7 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
 
     @Override
     public void giroCalibrado() {
-        iVista.mostrarToast("Giro Calibrado");
-
+        //iVista.mostrarToast("Giro Calibrado");
     }
 
     @Override
@@ -246,7 +228,7 @@ public class Presentador implements  IPresentador, PositionControlerCallback, Me
     }
 
     @Override
-    public void setVisibleElementPressed(MapElement element, boolean isVisible) {
+    public void setVisibleElementPressed(DespachoElement element, boolean isVisible) {
         element.visible = isVisible;
     }
 

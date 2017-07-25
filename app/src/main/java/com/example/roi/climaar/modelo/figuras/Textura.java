@@ -7,8 +7,6 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
 
-import com.example.roi.climaar.old.AppInstance;
-
 /**
  * Created by roi on 18/11/16.
  */

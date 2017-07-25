@@ -1,4 +1,4 @@
-package com.example.roi.climaar.menus.editmap;
+package com.example.roi.climaar.menus;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -48,7 +48,7 @@ public class AttributeListItem extends LinearLayout{
         //Utilizamos el layout menu opciones layout
         String infService = Context.LAYOUT_INFLATER_SERVICE;
         LayoutInflater li =(LayoutInflater)getContext().getSystemService(infService);
-        li.inflate(R.layout.list_item_edit_map_attribute, this, true);
+        li.inflate(R.layout.list_item_edit_despacho_attribute, this, true);
         title = (TextView) findViewById(R.id.title);
         summary = (TextView) findViewById(R.id.summary);
     }

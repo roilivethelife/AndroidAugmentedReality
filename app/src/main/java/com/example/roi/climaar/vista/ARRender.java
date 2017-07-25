@@ -1,40 +1,18 @@
 package com.example.roi.climaar.vista;
 
 import android.app.Activity;
-import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
-import android.view.MotionEvent;
 
-import com.example.roi.climaar.modelo.mapa.MapElement;
-import com.example.roi.climaar.modelo.mapa.Mapa;
+import com.example.roi.climaar.modelo.despacho.Despacho;
+import com.example.roi.climaar.modelo.despacho.DespachoElement;
 import com.example.roi.climaar.vista.vuforia.SampleAppRenderer;
 import com.example.roi.climaar.vista.vuforia.SampleAppRendererControl;
-import com.vuforia.COORDINATE_SYSTEM_TYPE;
-import com.vuforia.CameraDevice;
 import com.vuforia.Device;
-import com.vuforia.GLTextureUnit;
-import com.vuforia.Matrix34F;
-import com.vuforia.Mesh;
-import com.vuforia.Renderer;
-import com.vuforia.RenderingPrimitives;
 import com.vuforia.State;
-import com.vuforia.Tool;
-import com.vuforia.TrackerManager;
-import com.vuforia.VIDEO_BACKGROUND_REFLECTION;
-import com.vuforia.VIEW;
-import com.vuforia.Vec2F;
-import com.vuforia.Vec2I;
-import com.vuforia.Vec4I;
-import com.vuforia.VideoBackgroundConfig;
-import com.vuforia.VideoMode;
-import com.vuforia.ViewList;
 import com.vuforia.Vuforia;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -42,7 +20,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * 
  */
-public class ARRender implements GLSurfaceView.Renderer , SampleAppRendererControl{
+public class ARRender extends GLSurfaceView implements GLSurfaceView.Renderer , SampleAppRendererControl{
 
     private static final String LOGTAG = "ARRender";
 
@@ -68,7 +46,7 @@ public class ARRender implements GLSurfaceView.Renderer , SampleAppRendererContr
     /**
      * Elementos a dibujar en pantalla
      */
-    private Mapa mapaActual;
+    private Despacho despachoActual;
 
     public static float[] identityMatrix = {
             1.0f, 0.0f, 0.0f, 0.0f,
@@ -89,13 +67,17 @@ public class ARRender implements GLSurfaceView.Renderer , SampleAppRendererContr
      * @param activity activity actual
      * @param iARActivity Interfaz IARActivity
      */
-    public ARRender(Activity activity, IARActivity iARActivity, Mapa mapaActual) {
+    public ARRender(Activity activity, IARActivity iARActivity, Despacho despachoActual) {
+        super(activity);
+        // Create an OpenGL ES 2.0 context
+        setEGLContextClientVersion(2);
+
         this.activity = activity;
         this.iARActivity = iARActivity;
 
         mSampleAppRenderer = new SampleAppRenderer(this, activity, Device.MODE.MODE_AR, false,
                 1f , 1000f);
-        this.mapaActual = mapaActual;
+        this.despachoActual = despachoActual;
     }
 
     /**
@@ -110,8 +92,8 @@ public class ARRender implements GLSurfaceView.Renderer , SampleAppRendererContr
         GLES20.glEnable(GLES20.GL_CULL_FACE);
 
         this.shader= new Shader(activity);
-        iARActivity.loadFiguras();
         iARActivity.onSurfaceCreated();
+        iARActivity.loadFiguras();
         mSampleAppRenderer.onSurfaceCreated();
     }
 
@@ -176,28 +158,28 @@ public class ARRender implements GLSurfaceView.Renderer , SampleAppRendererContr
         GLES20.glUniformMatrix4fv(shader.getmPVMatrixHandle(), 1, false, projectionMatrix, 0);
 
         float[] matrix = iARActivity.updateVuforiaState(state);
-        if(matrix[15]>0.99f && mapaActual!=null) {//vuforia track ok
-            Matrix.translateM(matrix, 0, -mapaActual.markerPos[0], -mapaActual.markerPos[1], -mapaActual.markerPos[2]);
-            for (MapElement mapElement :mapaActual.mapaElements) {
-                if(mapElement.visible) {
+        if(matrix[15]>0.99f && despachoActual !=null) {//vuforia track ok
+            Matrix.translateM(matrix, 0, -despachoActual.markerPos[0], -despachoActual.markerPos[1], -despachoActual.markerPos[2]);
+            for (DespachoElement despachoElement : despachoActual.despachoElements) {
+                if(despachoElement.visible) {
                     float[] tempModelViewMatrix = matrix.clone();
-                    Matrix.translateM(tempModelViewMatrix, 0, mapElement.pos[0], mapElement.pos[1], mapElement.pos[2]);
-                    if(!mapElement.alignCamera) {
-                        Matrix.scaleM(tempModelViewMatrix, 0, mapElement.scale[0], mapElement.scale[1], mapElement.scale[2]);
+                    Matrix.translateM(tempModelViewMatrix, 0, despachoElement.pos[0], despachoElement.pos[1], despachoElement.pos[2]);
+                    if(!despachoElement.alignCamera) {
+                        Matrix.scaleM(tempModelViewMatrix, 0, despachoElement.scale[0], despachoElement.scale[1], despachoElement.scale[2]);
                     }else{
                         double ang = -Math.toDegrees(Math.atan2(tempModelViewMatrix[4],tempModelViewMatrix[0]));
-                        tempModelViewMatrix[0]=mapElement.scale[0];
+                        tempModelViewMatrix[0]= despachoElement.scale[0];
                         tempModelViewMatrix[1]=0f;
                         tempModelViewMatrix[2]=0f;
                         tempModelViewMatrix[4]=0f;
-                        tempModelViewMatrix[5]=-mapElement.scale[1];
+                        tempModelViewMatrix[5]=-despachoElement.scale[1];
                         tempModelViewMatrix[6]=0f;
                         tempModelViewMatrix[8]=0f;
                         tempModelViewMatrix[9]=0f;
-                        tempModelViewMatrix[10]=-mapElement.scale[2];
+                        tempModelViewMatrix[10]=-despachoElement.scale[2];
                         Matrix.rotateM(tempModelViewMatrix,0,(float)ang,0,0,1);
                     }
-                    mapElement.dibujar(shader, tempModelViewMatrix);
+                    despachoElement.dibujar(shader, tempModelViewMatrix);
                 }
             }
         }

@@ -4,7 +4,7 @@ import java.util.*;
 import static java.util.logging.Level.SEVERE;
 import java.util.logging.Logger;
 
-public class StringUtils {
+class StringUtils {
     private static Logger log = Logger.getLogger(StringUtils.class.getName());
 
     // ----------------------------------------------------------------------

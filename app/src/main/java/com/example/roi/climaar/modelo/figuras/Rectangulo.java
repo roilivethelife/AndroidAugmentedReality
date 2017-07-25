@@ -47,6 +47,12 @@ public class Rectangulo extends VboClient {
         vertexBuffer.position(0);
     }
 
+    public void setPos(float x, float y, float z){
+        this.z = z;
+        this.y = y;
+        this.x = x;
+    }
+
     public void setWidth(float width) {
         this.width = width;
     }

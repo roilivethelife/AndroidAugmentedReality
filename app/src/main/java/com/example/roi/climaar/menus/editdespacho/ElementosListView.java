@@ -1,4 +1,4 @@
-package com.example.roi.climaar.menus.editmap;
+package com.example.roi.climaar.menus.editdespacho;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.roi.climaar.R;
-import com.example.roi.climaar.modelo.mapa.MapElement;
+import com.example.roi.climaar.modelo.despacho.DespachoElement;
 
 import java.util.ArrayList;
 
@@ -18,16 +18,16 @@ import java.util.ArrayList;
  * Created by roi on 22/06/17.
  */
 
-public class ElementosListView extends LinearLayout implements View.OnClickListener{
+class ElementosListView extends LinearLayout implements View.OnClickListener{
 
     private static final String LOGTAG = "ElementosListView";
-    private ArrayList<MapElement> elements;
+    private ArrayList<DespachoElement> elements;
     private ArrayList<ElementoInfoListItem> elementsView;
     private int elementoSeleccionado;
 
-    private ImageButton buttonAdd;
+    //private ImageButton buttonAdd;
     private ImageButton buttonEdit;
-    private ImageButton buttonDel;
+    //private ImageButton buttonDel;
     private LinearLayout listView;
     private TextView textNoMoreElements;
 
@@ -52,30 +52,30 @@ public class ElementosListView extends LinearLayout implements View.OnClickListe
         elementoSeleccionado = -1;
         elements = new ArrayList<>();
         elementsView = new ArrayList<>();
-        buttonAdd = (ImageButton) findViewById(R.id.imageButtonAdd);
+        //buttonAdd = (ImageButton) findViewById(R.id.imageButtonAdd);
         buttonEdit = (ImageButton) findViewById(R.id.imageButtonEdit);
-        buttonDel = (ImageButton) findViewById(R.id.imageButtonDel);
+        //buttonDel = (ImageButton) findViewById(R.id.imageButtonDel);
         listView = (LinearLayout) findViewById(R.id.linearLayoutListView);
         textNoMoreElements = (TextView) listView.findViewById(R.id.textNoMoreElements);
         textNoMoreElements.setOnClickListener(this);
-        buttonAdd.setOnClickListener(this);
+        //buttonAdd.setOnClickListener(this);
         buttonEdit.setOnClickListener(this);
-        buttonDel.setOnClickListener(this);
+        //buttonDel.setOnClickListener(this);
     }
 
-    public void addElemento(MapElement element){
+    public void addElemento(DespachoElement element){
         if(elements.contains(element)) return;
 
         ElementoInfoListItem elementoView = new ElementoInfoListItem(getContext());
         elementoView.setNombreText(element.getName());
-        elementoView.setDescText(element.getFigureType());
+        elementoView.setDescText(element.getFigureTypeString());
         elementoView.setOnClickListener(this);
         elements.add(element);
         elementsView.add(elementoView);
         listView.addView(elementoView,listView.getChildCount()-1);
     }
 
-    public void delElemento(MapElement element){
+    public void delElemento(DespachoElement element){
         if(!elements.contains(element)) return;
         int index = elements.indexOf(element);
         if(elementoSeleccionado==index){
@@ -89,7 +89,7 @@ public class ElementosListView extends LinearLayout implements View.OnClickListe
         elementsView.remove(index);
     }
 
-    public MapElement getElementSeleccionado(){
+    public DespachoElement getElementSeleccionado(){
         if(elementoSeleccionado==-1) return null;
         return elements.get(elementoSeleccionado);
     }
@@ -125,20 +125,20 @@ public class ElementosListView extends LinearLayout implements View.OnClickListe
             }
         }else {
             switch (v.getId()) {
-                case R.id.imageButtonAdd:
+                /*case R.id.imageButtonAdd:
                     if (listener != null) {
                         listener.onAddElementoPushed();
                     }
-                    break;
+                    break;*/
                 case R.id.imageButtonEdit:
                     if (listener != null) {
                         listener.onEditElementoPushed(getElementSeleccionado());
                     }
                     break;
-                case R.id.imageButtonDel:
+                /*case R.id.imageButtonDel:
                     if (listener != null) {
                         listener.onDelElementoPushed(getElementSeleccionado());
-                    }
+                    }*/
                 case R.id.textNoMoreElements:
                     if(listener!=null){
                         newSelectedElement(-1);
@@ -161,8 +161,8 @@ public class ElementosListView extends LinearLayout implements View.OnClickListe
 
     public interface ElementosListViewInterface{
         void onSelectedElementoChanged();
-        void onAddElementoPushed();
-        void onEditElementoPushed(MapElement element);
-        void onDelElementoPushed(MapElement element);
+        //void onAddElementoPushed();
+        void onEditElementoPushed(DespachoElement element);
+        //void onDelElementoPushed(DespachoElement element);
     }
 }
